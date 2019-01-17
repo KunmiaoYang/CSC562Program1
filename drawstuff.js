@@ -1,201 +1,5 @@
 /* classes */
 
-// Color class
-class Color {
-    constructor(r,g,b,a) {
-        try {
-            if ((typeof(r) !== "number") || (typeof(g) !== "number") || (typeof(b) !== "number") || (typeof(a) !== "number"))
-                throw "color component not a number";
-            else if ((r<0) || (g<0) || (b<0) || (a<0))
-                throw "color component less than 0";
-            else if ((r>255) || (g>255) || (b>255) || (a>255))
-                throw "color component bigger than 255";
-            else {
-                this[0] = r; this[1] = g; this[2] = b; this[3] = a;
-            }
-        } // end try
-
-        catch (e) {
-            console.log(e);
-        }
-    } // end Color constructor
-
-        // Color change method
-    change(r,g,b,a) {
-        try {
-            if ((typeof(r) !== "number") || (typeof(g) !== "number") || (typeof(b) !== "number") || (typeof(a) !== "number"))
-                throw "color component not a number";
-            else if ((r<0) || (g<0) || (b<0) || (a<0))
-                throw "color component less than 0";
-            else if ((r>255) || (g>255) || (b>255) || (a>255))
-                throw "color component bigger than 255";
-            else {
-                this[0] = r; this[1] = g; this[2] = b; this[3] = a;
-            }
-        } // end try
-
-        catch (e) {
-            console.log(e);
-        }
-    } // end Color change method
-} // end color class
-
-// Vector class
-class Vector {
-    constructor(x,y,z) {
-        this.set(x,y,z);
-    } // end constructor
-
-    // sets the components of a vector
-    set(x,y,z) {
-        try {
-            if ((typeof(x) !== "number") || (typeof(y) !== "number") || (typeof(z) !== "number"))
-                throw "vector component not a number";
-            else
-                this.x = x; this.y = y; this.z = z;
-        } // end try
-
-        catch(e) {
-            console.log(e);
-        }
-    } // end vector set
-
-    // copy the passed vector into this one
-    copy(v) {
-        try {
-            if (!(v instanceof Vector))
-                throw "Vector.copy: non-vector parameter";
-            else
-                this.x = v.x; this.y = v.y; this.z = v.z;
-        } // end try
-
-        catch(e) {
-            console.log(e);
-        }
-    }
-
-    toConsole(prefix) {
-        console.log(prefix+"["+this.x+","+this.y+","+this.z+"]");
-    } // end to console
-
-    // static dot method
-    static dot(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.dot: non-vector parameter";
-            else
-                return(v1.x*v2.x + v1.y*v2.y + v1.z*v2.z);
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(NaN);
-        }
-    } // end dot static method
-
-    // static add method
-    static add(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.add: non-vector parameter";
-            else
-                return(new Vector(v1.x+v2.x,v1.y+v2.y,v1.z+v2.z));
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
-    } // end add static method
-
-    // static subtract method, v1-v2
-    static subtract(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.subtract: non-vector parameter";
-            else {
-                var v = new Vector(v1.x-v2.x,v1.y-v2.y,v1.z-v2.z);
-                //v.toConsole("Vector.subtract: ");
-                return(v);
-            }
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
-    } // end subtract static method
-
-    // static divide method, v1.x/v2.x etc
-    static divide(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.divide: non-vector parameter";
-            else {
-                var v = new Vector(v1.x/v2.x,v1.y/v2.y,v1.z/v2.z);
-                //v.toConsole("Vector.divide: ");
-                return(v);
-            }
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
-    } // end divide static method
-
-    // static divide method, v1.x/v2.x etc
-    static multiply(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.multiply: non-vector parameter";
-            else {
-                var v = new Vector(v1.x*v2.x,v1.y*v2.y,v1.z*v2.z);
-                //v.toConsole("Vector.divide: ");
-                return(v);
-            }
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
-    } // end multiply static method
-
-    // static scale method
-    static scale(c,v) {
-        try {
-            if (!(typeof(c) === "number") || !(v instanceof Vector))
-                throw "Vector.scale: malformed parameter";
-            else
-                return(new Vector(c*v.x,c*v.y,c*v.z));
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
-    } // end scale static method
-
-    // static normalize method
-    static normalize(v) {
-        try {
-            if (!(v instanceof Vector))
-                throw "Vector.normalize: parameter not a vector";
-            else {
-                var lenDenom = 1/Math.sqrt(Vector.dot(v,v));
-                return(Vector.scale(lenDenom,v));
-            }
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
-    } // end scale static method
-
-} // end Vector class
-
 
 /* utility functions */
 
@@ -297,12 +101,9 @@ function drawRandPixels(context) {
 
 // get the input ellipsoids from the standard class URL
 function getInputEllipsoids() {
-    const INPUT_ELLIPSOIDS_URL =
-        "https://ncsucgclass.github.io/prog1/ellipsoids.json";
-
     // load the ellipsoids file
     var httpReq = new XMLHttpRequest(); // a new http request
-    httpReq.open("GET",INPUT_ELLIPSOIDS_URL,false); // init the request
+    httpReq.open("GET",CONST.INPUT_ELLIPSOIDS_URL,false); // init the request
     httpReq.send(null); // send the request
     var startTime = Date.now();
     while ((httpReq.status !== 200) && (httpReq.readyState !== XMLHttpRequest.DONE)) {
@@ -410,7 +211,7 @@ function shadeIsect(isect,isectEllipsoid,lights,ellipsoids) {
         if (   !(isect instanceof Object) || !(typeof(isectEllipsoid) === "number")
             || !(lights instanceof Array) || !(ellipsoids instanceof Array))
             throw "shadeIsect: bad parameter passed";
-        else if (RENDER_METHOD == renderTypes.ISECT_ONLY) {
+        else if (CONST.RENDER_METHOD == CONST.renderTypes.ISECT_ONLY) {
             var r = ellipsoids[isectEllipsoid].diffuse[0];
             var g = ellipsoids[isectEllipsoid].diffuse[1];
             var b = ellipsoids[isectEllipsoid].diffuse[2];
@@ -437,7 +238,7 @@ function shadeIsect(isect,isectEllipsoid,lights,ellipsoids) {
                 // console.log("isect: "+isect.xyz.x+", "+isect.xyz.y+", "+isect.xyz.z);
 
                 // if light isn't occluded
-                var shadowed = (RENDER_METHOD == renderTypes.LIT_SHADOWS) ?
+                var shadowed = (CONST.RENDER_METHOD == CONST.renderTypes.LIT_SHADOWS) ?
                                 GEO.isLightOccluded(L,isect.xyz,isectEllipsoid,ellipsoids) : false;
                 if (!shadowed) {
                     // console.log("no occlusion found");
@@ -455,7 +256,7 @@ function shadeIsect(isect,isectEllipsoid,lights,ellipsoids) {
                     } // end nonzero diffuse factor
 
                     // add in the specular light
-                    var V = Vector.normalize(Vector.subtract(Eye,isect.xyz)); // view vector
+                    var V = Vector.normalize(Vector.subtract(CONST.Eye,isect.xyz)); // view vector
                     var H = Vector.normalize(Vector.add(L,V)); // half vector
                     var specFactor = Math.max(0,Vector.dot(N,H));
                     if (specFactor > 0) {
@@ -486,14 +287,12 @@ function shadeIsect(isect,isectEllipsoid,lights,ellipsoids) {
 
 // use ray casting with ellipsoids to get pixel colors
 function rayCastEllipsoids(context) {
-    var inputEllipsoids = getJSONFile(INPUT_SPHERES_URL,"ellipsoids");
-    var inputLights = getJSONFile(INPUT_LIGHTS_URL,"lights");
+    var inputEllipsoids = getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids");
+    var inputLights = getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
     var w = context.canvas.width;
     var h = context.canvas.height;
     var imagedata = context.createImageData(w,h);
     // console.log("casting rays");
-    console.log("ellipsoids", inputEllipsoids);
-    console.log("lights", inputLights);
 
     if (inputEllipsoids != String.null) {
         var x = 0; var y = 0; // pixel coord init
@@ -505,20 +304,20 @@ function rayCastEllipsoids(context) {
         //console.log("number of ellipsoids: " + n);
 
         // Loop over the pixels and ellipsoids, intersecting them
-        var wx = WIN_LEFT; // init world pixel xcoord
-        var wxd = (WIN_RIGHT-WIN_LEFT) * 1/(w-1); // world pixel x differential
-        var wy = WIN_TOP; // init world pixel ycoord
-        var wyd = (WIN_BOTTOM-WIN_TOP) * 1/(h-1); // world pixel y differential
+        var wx = CONST.WIN_LEFT; // init world pixel xcoord
+        var wxd = (CONST.WIN_RIGHT-CONST.WIN_LEFT) * 1/(w-1); // world pixel x differential
+        var wy = CONST.WIN_TOP; // init world pixel ycoord
+        var wyd = (CONST.WIN_BOTTOM-CONST.WIN_TOP) * 1/(h-1); // world pixel y differential
         for (y=0; y<h; y++) {
-            wx = WIN_LEFT; // init w
+            wx = CONST.WIN_LEFT; // init w
             for (x=0; x<h; x++) {
                 closestT = Number.MAX_VALUE; // no closest t for this pixel
                 c.change(0,0,0,255); // set pixel to background color
-                Dir.copy(Vector.subtract(new Vector(wx,wy,WIN_Z),Eye)); // set ray direction
+                Dir.copy(Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye)); // set ray direction
                 //Dir.toConsole("Dir: ");
                 for (var e=0; e<n; e++) {
                 // for (var e=0; e<1; e++) {
-                    isect = GEO.rayEllipsoidIntersect([Eye,Dir],inputEllipsoids[e],1);
+                    isect = GEO.rayEllipsoidIntersect([CONST.Eye,Dir],inputEllipsoids[e],1);
                     if (isect.exists) // there is an intersect
                         if (isect.t < closestT) { // it is the closest yet
                             closestT = isect.t; // record closest t yet
@@ -535,22 +334,10 @@ function rayCastEllipsoids(context) {
     } // end if ellipsoids found
 } // end ray cast ellipsoids
 
-// given a pixel position, calculate x and y pixel and world coords
-function getPixelLocat(pixelNum, w, h) {
-    var y = Math.floor(pixelNum/w);
-    var x = pixelNum - y*w;
-    var wx = WIN_LEFT + x/w * (WIN_RIGHT - WIN_LEFT);
-    var wy = WIN_TOP + y/h * (WIN_BOTTOM - WIN_TOP);
-
-    //console.log("pixelNum: "+pixelNum+", x:"+x+", y:"+y+", wx:"+wx+", wy:"+wy);
-
-    return ({"x": x, "y": y, "wx": wx, "wy": wy});
-}
-
 // use frameless ray casting with spheres to get pixel colors
 function framelessRayCastSpheres(context) {
-    var inputSpheres = getJSONFile(INPUT_SPHERES_URL,"spheres");
-    var inputLights = getJSONFile(INPUT_LIGHTS_URL,"lights");
+    var inputSpheres = getJSONFile(CONST.INPUT_SPHERES_URL,"spheres");
+    var inputLights = getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
 
     if ((inputSpheres != String.null) && (inputLights != String.null)) {
         var n = inputSpheres.length; // the number of spheres
@@ -578,12 +365,12 @@ function framelessRayCastSpheres(context) {
             while (performance.now() < endTime) {
                 closestT = Number.MAX_VALUE; // no closest t for this pixel
                 c.change(0,0,0,255); // set pixel to background color
-                pixelLocat = getPixelLocat(pixelOrder[p],w,h); // get pixel location
-                Dir.copy(Vector.subtract(new Vector(pixelLocat.wx,pixelLocat.wy,WIN_Z),Eye)); // set ray direction
+                pixelLocat = VIEW.getPixelLocat(pixelOrder[p],w,h); // get pixel location
+                Dir.copy(Vector.subtract(new Vector(pixelLocat.wx,pixelLocat.wy,CONST.WIN_Z),CONST.Eye)); // set ray direction
                 //Dir.toConsole("Dir: ");
                 for (var s=0; s<n; s++) { // for each sphere
                     // for (var s=0; s<1; s++) {
-                    isect = raySphereIntersect([Eye,Dir],inputSpheres[s],1);
+                    isect = raySphereIntersect([CONST.Eye,Dir],inputSpheres[s],1);
                     if (isect.exists) // there is an intersect
                         if (isect.t < closestT) { // it is the closest yet
                             closestT = isect.t; // record closest t yet
@@ -619,25 +406,6 @@ function framelessRayCastSpheres(context) {
 } // end frameless ray cast spheres
 
 
-/* constants and globals */
-
-const WIN_Z = 0;
-const WIN_LEFT = 0, WIN_RIGHT = 1;
-const WIN_BOTTOM = 0, WIN_TOP = 1;
-const INPUT_SPHERES_URL =
-    "https://ncsucgclass.github.io/prog1/ellipsoids.json";
-    //"https://pages.github.ncsu.edu/bwatson/introcg-prog1-2017/ellipsoids.json";
-const INPUT_LIGHTS_URL =
-    "https://ncsucgclass.github.io/prog1/lights.json";
-    //"https://pages.github.ncsu.edu/bwatson/introcg-prog1-2017/lights.json";
-const renderTypes = {
-        ISECT_ONLY: 1, // render white if intersect in pixel
-        LIT: 2, // render lit color if intersect in pixel
-        LIT_SHADOWS: 3 // render lit/shadowed color in intersect in pixel
-    };
-const RENDER_METHOD = renderTypes.LIT_SHADOWS; // show intersections unlit in white
-
-var Eye = new Vector(0.5,0.5,-0.5); // set the eye position
 
 
 /* main -- here is where execution begins after window load */
