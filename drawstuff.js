@@ -1,8 +1,3 @@
-/* classes */
-
-
-/* utility functions */
-
 // generate n integers in random order
 // uses Fisher-Yates shuffle
 function randPermutation(n) {
@@ -27,34 +22,6 @@ function randPermutation(n) {
 
     return(array);
 }
-
-// get the JSON file from the passed URL
-function getJSONFile(url,descr) {
-    try {
-        if ((typeof(url) !== "string") || (typeof(descr) !== "string"))
-            throw "getJSONFile: parameter not a string";
-        else {
-            var httpReq = new XMLHttpRequest(); // a new http request
-            httpReq.open("GET",url,false); // init the request
-            httpReq.send(null); // send the request
-            var startTime = Date.now();
-            while ((httpReq.status !== 200) && (httpReq.readyState !== XMLHttpRequest.DONE)) {
-                if ((Date.now()-startTime) > 3000)
-                    break;
-            } // until its loaded or we time out after three seconds
-            if ((httpReq.status !== 200) || (httpReq.readyState !== XMLHttpRequest.DONE))
-                throw "Unable to open "+descr+" file!";
-            else
-                return JSON.parse(httpReq.response);
-        } // end if good params
-    } // end try
-
-    catch(e) {
-        console.log(e);
-        return(String.null);
-    }
-} // end get input json file
-
 
 // draw a pixel at x,y using color
 function drawPixel(imagedata,x,y,color) {
@@ -99,27 +66,10 @@ function drawRandPixels(context) {
     context.putImageData(imagedata, 0, 0);
 } // end draw random pixels
 
-// get the input ellipsoids from the standard class URL
-function getInputEllipsoids() {
-    // load the ellipsoids file
-    var httpReq = new XMLHttpRequest(); // a new http request
-    httpReq.open("GET",CONST.INPUT_ELLIPSOIDS_URL,false); // init the request
-    httpReq.send(null); // send the request
-    var startTime = Date.now();
-    while ((httpReq.status !== 200) && (httpReq.readyState !== XMLHttpRequest.DONE)) {
-        if ((Date.now()-startTime) > 3000)
-            break;
-    } // until its loaded or we time out after three seconds
-    if ((httpReq.status !== 200) || (httpReq.readyState !== XMLHttpRequest.DONE)) {
-        console.log*("Unable to open input ellipses file!");
-        return String.null;
-    } else
-        return JSON.parse(httpReq.response);
-} // end get input ellipsoids
 
 // put random points in the ellipsoids from the class github
 function drawRandPixelsInInputEllipsoids(context) {
-    var inputEllipsoids = getInputEllipsoids();
+    var inputEllipsoids = RES.getInputEllipsoids();
     var w = context.canvas.width;
     var h = context.canvas.height;
     var imagedata = context.createImageData(w,h);
@@ -172,7 +122,7 @@ function drawRandPixelsInInputEllipsoids(context) {
 
 // draw 2d projections read from the JSON file at class github
 function drawInputEllipsoidsUsingArcs(context) {
-    var inputEllipsoids = getInputEllipsoids();
+    var inputEllipsoids = RES.getInputEllipsoids();
 
 
     if (inputEllipsoids != String.null) {
@@ -287,8 +237,8 @@ function shadeIsect(isect,isectEllipsoid,lights,ellipsoids) {
 
 // use ray casting with ellipsoids to get pixel colors
 function rayCastEllipsoids(context) {
-    var inputEllipsoids = getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids");
-    var inputLights = getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
+    var inputEllipsoids = RES.getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids");
+    var inputLights = RES.getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
     var w = context.canvas.width;
     var h = context.canvas.height;
     var imagedata = context.createImageData(w,h);
@@ -336,8 +286,8 @@ function rayCastEllipsoids(context) {
 
 // use frameless ray casting with spheres to get pixel colors
 function framelessRayCastSpheres(context) {
-    var inputSpheres = getJSONFile(CONST.INPUT_SPHERES_URL,"spheres");
-    var inputLights = getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
+    var inputSpheres = RES.getJSONFile(CONST.INPUT_SPHERES_URL,"spheres");
+    var inputLights = RES.getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
 
     if ((inputSpheres != String.null) && (inputLights != String.null)) {
         var n = inputSpheres.length; // the number of spheres
