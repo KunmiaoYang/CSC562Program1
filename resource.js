@@ -51,9 +51,15 @@ var RES = function() {
   }; // end get input json file
 
   var parseEllipsoids = function(bodies) {
-    var ellipsoids = getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids").map(Ellipsoid);
+    var ellipsoids = getJSONFile(CONST.INPUT_ELLIPSOIDS_URL,"ellipsoids").map(Ellipsoid);
     for (var i = 0; i < ellipsoids.length; i++)
       bodies.push(ellipsoids[i]);
+  }
+
+  var parseSpheres = function(bodies) {
+    var spheres = getJSONFile(CONST.INPUT_SPHERES_URL,"spheres").map(Sphere);
+    for (var i = 0; i < spheres.length; i++)
+      bodies.push(spheres[i]);
   }
 
   var parseTriangles = function(input, bodies) {
@@ -72,15 +78,16 @@ var RES = function() {
     bounceBodies: [],
     // inputLights: getJSONFile(CONST.INPUT_LIGHTS_URL,"lights").map(PointLight),
     inputLights: [
-      // {"x": 0.5, "y": 0.5, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
-      {"x": 2, "y": 2, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
+      {"x": 0.5, "y": 0.5, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
+      // {"x": 2, "y": 2, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
       // {"x": 2, "y": 4, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
     ].map(PointLight),
     getJSONFile: getJSONFile,
     loadBodies: function(bodies, bounceBodies) {
-      parseEllipsoids(bodies);
-      // for (var i = 0; i < box.length; i++)
-      //   parseTriangles(box[i], bodies);
+      // parseEllipsoids(bodies);
+      parseSpheres(bodies);
+      for (var i = 0; i < box.length; i++)
+        parseTriangles(box[i], bodies);
 
       for (var i = 0; i < bodies.length; i++)
         bounceBodies.push(bodies[i]);

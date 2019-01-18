@@ -9,11 +9,13 @@ var CONST = function() {
     WIN_Z: 0,
     WIN_LEFT: 0, WIN_RIGHT: 1,
     WIN_BOTTOM: 0, WIN_TOP: 1,
-    INPUT_SPHERES_URL:
+    INPUT_ELLIPSOIDS_URL:
         "https://ncsucgclass.github.io/prog1/ellipsoids.json",
+    INPUT_SPHERES_URL:
+      "https://ncsucg4games.github.io/prog1/spheres.json",
         //"https://pages.github.ncsu.edu/bwatson/introcg-prog1-2017/ellipsoids.json",
     INPUT_LIGHTS_URL:
-        "https://ncsucgclass.github.io/prog1/lights.json",
+      "https://ncsucg4games.github.io/prog1/lights.json",
         //"https://pages.github.ncsu.edu/bwatson/introcg-prog1-2017/lights.json",
     renderTypes: renderTypes,
     RENDER_METHOD: renderTypes.LIT_SHADOWS, // show intersections unlit in white
