@@ -1,4 +1,7 @@
 var Ellipsoid = function(body) {
+  // Extends from Body
+  Body(body);
+
   // ray ellipsoid intersection
   // if no intersect, return NaN
   // if intersect, return xyz vector and t value

@@ -6,7 +6,5 @@ var PointLight = function(light) {
     Lloc.set(light.x,light.y,light.z);
   }
 
-  light.BRDF = light.addDiffuse;
-
   return light;
 }
