@@ -26,7 +26,26 @@ var SHADER = function() {
                     c[1] += lights[l].ambient[1] * body.ambient[1]; // ambient term g
                     c[2] += lights[l].ambient[2] * body.ambient[2]; // ambient term b
 
-                    lights[l].castLight(isect, isectId, bodies, Lloc, c);
+                    // check each other sphere to see if it occludes light
+                    lights[l].getLoc(Lloc);
+                    var L = Vector.normalize(Vector.subtract(Lloc,isect.xyz)); // light vector unnorm'd
+                    // L.toConsole("L: ");
+                    // console.log("isect: "+isect.xyz.x+", "+isect.xyz.y+", "+isect.xyz.z);
+
+                    // if light isn't occluded
+                    var shadowed = (CONST.RENDER_METHOD == CONST.renderTypes.LIT_SHADOWS) ?
+                                    GEO.isLightOccluded(L,isect.xyz,isectId,bodies) : false;
+                    if (!shadowed) {
+                        // console.log("no occlusion found");
+
+                        // add in the diffuse light
+                        var N = body.calcNormVec(isect); // surface normal
+                        lights[l].addDiffuse(N, L, body, c);
+
+                        // add in the specular light
+                        var V = Vector.normalize(Vector.subtract(CONST.Eye,isect.xyz)); // view vector
+                        lights[l].addSpecular(N, L, V, body, c);
+                    } // end if light not occluded
                 } // end for lights
 
                 c[0] = 255 * Math.min(1,c[0]); // clamp max value to 1
