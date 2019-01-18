@@ -23,6 +23,65 @@ function randPermutation(n) {
     return(array);
 }
 
+// ray ellipsoid intersection
+// if no intersect, return NaN
+// if intersect, return xyz vector and t value
+// intersects in front of clipVal don't count
+function rayEllipsoidIntersect(ray,ellipsoid,clipVal) {
+    try {
+        if (!(ray instanceof Array) || !(ellipsoid instanceof Object))
+            throw "RayEllipsoidIntersect: ray or ellipsoid are not formatted well";
+        else if (ray.length != 2)
+            throw "RayEllipsoidIntersect: badly formatted ray";
+        else { // valid params
+            var A = new Vector(ellipsoid.a,ellipsoid.b,ellipsoid.c); // A as a vector
+            var dDivA = Vector.divide(ray[1],A); // D/A
+            var quadA = Vector.dot(dDivA,dDivA); // dot(D/A,D/A)
+            var EmCdivA = Vector.divide(Vector.subtract(ray[0],new Vector(ellipsoid.x,ellipsoid.y,ellipsoid.z)),A); // (E-C)/A
+            var quadB = 2 * Vector.dot(dDivA,EmCdivA); // 2 * dot(D/A,(E-C)/A)
+            var quadC = Vector.dot(EmCdivA,EmCdivA) - 1; // dot((E-C)/A,(E-C)/A) - 1
+            // if (clipVal == 0) {
+            //     ray[0].toConsole("ray.orig: ");
+            //     ray[1].toConsole("ray.dir: ");
+            //     console.log("a:"+a+" b:"+b+" c:"+c);
+            // } // end debug case
+
+            var qsolve = solveQuad(quadA,quadB,quadC);
+            if (qsolve.length == 0)
+                throw "no intersection";
+            else if (qsolve.length == 1) {
+                if (qsolve[0] < clipVal)
+                    throw "intersection too close";
+                else {
+                    var isect = Vector.add(ray[0],Vector.scale(qsolve[0],ray[1]));
+                    //console.log("t: "+qsolve[0]);
+                    //isect.toConsole("intersection: ");
+                    return({"exists": true, "xyz": isect,"t": qsolve[0]});
+                } // one unclipped intersection
+            } else if (qsolve[0] < clipVal) {
+                if (qsolve[1] < clipVal)
+                    throw "intersections too close";
+                else {
+                    var isect = Vector.add(ray[0],Vector.scale(qsolve[1],ray[1]));
+                    //console.log("t2: "+qsolve[1]);
+                    //isect.toConsole("intersection: ");
+                    return({"exists": true, "xyz": isect,"t": qsolve[1]});
+                } // one intersect too close, one okay
+            } else {
+                var isect = Vector.add(ray[0],Vector.scale(qsolve[0],ray[1]));
+                //console.log("t1: "+qsolve[0]);
+                //isect.toConsole("intersection: ");
+                return({"exists": true, "xyz": isect,"t": qsolve[0]});
+            } // both not too close
+        } // end if valid params
+    } // end try
+
+    catch(e) {
+        //console.log(e);
+        return({"exists": false, "xyz": NaN, "t": NaN});
+    }
+} // end raySphereIntersect
+
 // draw a pixel at x,y using color
 function drawPixel(imagedata,x,y,color) {
     try {
@@ -65,7 +124,6 @@ function drawRandPixels(context) {
     } // end for x
     context.putImageData(imagedata, 0, 0);
 } // end draw random pixels
-
 
 // put random points in the ellipsoids from the class github
 function drawRandPixelsInInputEllipsoids(context) {
@@ -154,7 +212,6 @@ function drawInputEllipsoidsUsingArcs(context) {
     } // end if ellipsoids found
 } // end draw input ellipsoids
 
-
 // use ray casting with ellipsoids to get pixel colors
 function rayCastEllipsoids(context) {
     var inputEllipsoids = RES.getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids");
@@ -186,7 +243,7 @@ function rayCastEllipsoids(context) {
                 //Dir.toConsole("Dir: ");
                 for (var e=0; e<n; e++) {
                 // for (var e=0; e<1; e++) {
-                    isect = GEO.rayEllipsoidIntersect([CONST.Eye,Dir],inputEllipsoids[e],1);
+                    isect = rayEllipsoidIntersect([CONST.Eye,Dir],inputEllipsoids[e],1);
                     if (isect.exists) // there is an intersect
                         if (isect.t < closestT) { // it is the closest yet
                             closestT = isect.t; // record closest t yet
@@ -273,10 +330,11 @@ function framelessRayCastSpheres(context) {
     } // end if spheres found
 } // end frameless ray cast spheres
 
+/********************************************* My Code *********************************************/
 // use ray casting with bodies to get pixel colors
 function rayCastBodies(context, shader) {
     var inputBodies =
-      RES.getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids").map(GEO.createEllipsoid);
+      RES.getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids").map(Ellipsoid);
     var w = context.canvas.width;
     var h = context.canvas.height;
     var imagedata = context.createImageData(w,h);

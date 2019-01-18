@@ -39,10 +39,7 @@ var SHADER = function() {
                         // console.log("no occlusion found");
 
                         // add in the diffuse light
-                        var isectMCtr = Vector.subtract(isect.xyz,new Vector(body.x,body.y,body.z));
-                        var derivCoeffs = new Vector(body.a*body.a,body.b*body.b,body.c*body.c);
-                        var derivCoeffs = Vector.divide(new Vector(2,2,2),derivCoeffs);
-                        var N = Vector.normalize(Vector.multiply(isectMCtr,derivCoeffs)); // surface normal
+                        var N = body.calcNormVec(isect); // surface normal
                         var diffFactor = Math.max(0,Vector.dot(N,L));
                         if (diffFactor > 0) {
                             c[0] += lights[l].diffuse[0] * body.diffuse[0] * diffFactor;
