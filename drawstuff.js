@@ -333,17 +333,14 @@ function framelessRayCastSpheres(context) {
 /********************************************* My Code *********************************************/
 // use ray casting with bodies to get pixel colors
 function rayCastBodies(context, shader) {
-    var inputBodies =
-      RES.getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids").map(Ellipsoid);
     var w = context.canvas.width;
     var h = context.canvas.height;
     var imagedata = context.createImageData(w,h);
     // console.log("casting rays");
-    console.log("bodies", inputBodies);
 
-    if (inputBodies != String.null) {
+    if (RES.bodies != String.null) {
         var x = 0; var y = 0; // pixel coord init
-        var n = inputBodies.length; // the number of spheres
+        var n = RES.bodies.length; // the number of spheres
         var Dir = new Vector(0,0,0); // init the ray direction
         var closestT = Number.MAX_VALUE; // init the closest t value
         var c = new Color(0,0,0,0); // init the pixel color
@@ -358,19 +355,26 @@ function rayCastBodies(context, shader) {
         for (y=0; y<h; y++) {
             wx = CONST.WIN_LEFT; // init w
             for (x=0; x<h; x++) {
-                closestT = Number.MAX_VALUE; // no closest t for this pixel
+                closest = {
+                  exists: false,
+                  t: Number.MAX_VALUE, // no closest t for this pixel
+                }
                 c.change(0,0,0,255); // set pixel to background color
                 Dir.copy(Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye)); // set ray direction
                 //Dir.toConsole("Dir: ");
                 for (var e=0; e<n; e++) {
                 // for (var e=0; e<1; e++) {
-                    isect = inputBodies[e].rayIntersect([CONST.Eye,Dir],1);
+                    isect = RES.bodies[e].rayIntersect([CONST.Eye,Dir],1);
                     if (isect.exists && // there is an intersect
-                        isect.t < closestT) { // it is the closest yet
-                            closestT = isect.t; // record closest t yet
-                            c = shader(isect,e,RES.inputLights,inputBodies);
+                        isect.t < closest.t) { // it is the closest yet
+                            closest.t = isect.t; // record closest t yet
+                            closest.exists = true;
+                            closest.xyz = isect.xyz;
+                            closest.id = e;
+                            // c = shader(isect,e,RES.inputLights,RES.bodies);
                         } // end if closest yet
                 } // end for ellipsoids
+                if (closest.exists) c = shader(closest,closest.id,RES.inputLights,RES.bodies);
                 drawPixel(imagedata,x,y,c);
                 wx += wxd;
                 //console.log(""); // blank per pixel
@@ -383,6 +387,8 @@ function rayCastBodies(context, shader) {
 
 /* main -- here is where execution begins after window load */
 function main() {
+    // Load resource
+    RES.loadBodies(RES.bodies, RES.bounceBodies);
 
     // Get the canvas and context
     var canvas = document.getElementById("viewport");

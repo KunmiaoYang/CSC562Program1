@@ -36,6 +36,7 @@ class Vector {
         console.log(prefix+"["+this.x+","+this.y+","+this.z+"]");
     } // end to console
 
+
     // static dot method
     static dot(v1,v2) {
         try {
@@ -50,6 +51,25 @@ class Vector {
             return(NaN);
         }
     } // end dot static method
+
+    // static cross method
+    static cross(v1,v2) {
+        try {
+            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
+                throw "Vector.cross: non-vector parameter";
+            else
+                return new Vector(
+                  v1.y * v2.z - v1.z * v2.y,
+                  v1.z * v2.x - v1.x * v2.z,
+                  v1.x * v2.y - v1.y * v2.x
+                );
+        } // end try
+
+        catch(e) {
+            console.log(e);
+            return(NaN);
+        }
+    } // end cross static method
 
     // static add method
     static add(v1,v2) {

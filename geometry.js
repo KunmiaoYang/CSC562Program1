@@ -31,7 +31,9 @@ var GEO = function() {
       for (var e = 0, occluderIsect = {}; e < bodies.length; e++) {
         if (e == isect) continue;
         occluderIsect = bodies[e].rayIntersect([isectPos,L],0);
-        if (occluderIsect.exists && occluderIsect.t <= 1) return true;
+        if (occluderIsect.exists && occluderIsect.t <= 1) {
+          return true;
+        }
       }
       return false;
     }, // end is light occluded

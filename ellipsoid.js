@@ -1,6 +1,7 @@
 var Ellipsoid = function(body) {
-  // Extends from Body
-  Body(body);
+  // Default material
+  body.alpha = 1; // alpha compositing for transparent
+  body.RI = 1;  // Refrective index
 
   // ray ellipsoid intersection
   // if no intersect, return NaN
