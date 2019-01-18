@@ -28,7 +28,7 @@ var SHADER = function() {
 
                     // check each other sphere to see if it occludes light
                     lights[l].getLoc(Lloc);
-                    var L = Vector.normalize(Vector.subtract(Lloc,isect.xyz)); // light vector unnorm'd
+                    var L = Vector.subtract(Lloc,isect.xyz); // light vector unnorm'd
                     // L.toConsole("L: ");
                     // console.log("isect: "+isect.xyz.x+", "+isect.xyz.y+", "+isect.xyz.z);
 
@@ -36,6 +36,7 @@ var SHADER = function() {
                     var shadowed = (CONST.RENDER_METHOD == CONST.renderTypes.LIT_SHADOWS) ?
                                     GEO.isLightOccluded(L,isect.xyz,isectId,bodies) : false;
                     if (!shadowed) {
+                      L = Vector.normalize(L); // light vector unnorm'd
                         // console.log("no occlusion found");
 
                         // add in the diffuse light
