@@ -37,5 +37,24 @@ var GEO = function() {
       }
       return false;
     }, // end is light occluded
+    closestIntersect: function(ray, clipVal, bodies) {
+      var closest = {
+        exists: false,
+        t: Number.MAX_VALUE, // no closest t for this pixel
+      }
+      //Dir.toConsole("Dir: ");
+      for (var e=0, n = bodies.length, isect = {}; e<n; e++) {
+        isect = bodies[e].rayIntersect(ray, clipVal);
+        if (isect.exists && // there is an intersect
+            isect.t < closest.t) { // it is the closest yet
+          closest.t = isect.t; // record closest t yet
+          closest.exists = true;
+          closest.xyz = isect.xyz;
+          closest.id = e;
+          // c = shader(isect,e,RES.inputLights,RES.bodies);
+        } // end if closest yet
+      } // end for ellipsoids
+      return closest;
+    },
   };
 }();

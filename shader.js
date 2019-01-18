@@ -1,7 +1,7 @@
 var SHADER = function() {
   return {
     // color the passed intersection and body
-    rayTracing: function(isect,isectId,lights,bodies) {
+    rayTracing: function(isect,isectId,lights,bodies,c) {
         try {
             if (   !(isect instanceof Object) || !(typeof(isectId) === "number")
                 || !(lights instanceof Array) || !(bodies instanceof Array))
@@ -10,9 +10,9 @@ var SHADER = function() {
                 var r = bodies[isectId].diffuse[0];
                 var g = bodies[isectId].diffuse[1];
                 var b = bodies[isectId].diffuse[2];
-                return(new Color(255*r,255*g,255*b,255));
+                c.change(255*r,255*g,255*b,255);
+                return;
             } else { // if not just rendering intersects
-                var c = new Color(0,0,0,255); // init the ellipsoid color to black
                 var body = bodies[isectId]; // ellipsoid intersected by eye
                 // console.log("shading pixel");
 
@@ -28,7 +28,7 @@ var SHADER = function() {
 
                     // check each other sphere to see if it occludes light
                     lights[l].getLoc(Lloc);
-                    var L = Vector.subtract(Lloc,isect.xyz); // light vector unnorm'd
+                    var L = Vector.subtract(Lloc,isect.xyz); // light vector
                     // L.toConsole("L: ");
                     // console.log("isect: "+isect.xyz.x+", "+isect.xyz.y+", "+isect.xyz.z);
 
@@ -53,7 +53,7 @@ var SHADER = function() {
                 c[1] = 255 * Math.min(1,c[1]); // clamp max value to 1
                 c[2] = 255 * Math.min(1,c[2]); // clamp max value to 1
 
-                return(c);
+                return;
             } // if not just rendering isect
         } // end throw
 

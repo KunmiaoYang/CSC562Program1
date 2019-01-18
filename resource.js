@@ -1,7 +1,7 @@
 var RES = function() {
   var box = [
     {
-      "material": {"ambient": [0.1,0.1,0.1], "diffuse": [1,1,1], "specular": [0.3,0.3,0.3], "n":17},
+      "material": {"ambient": [0.1,0.1,0.1], "diffuse": [0,0,1], "specular": [0.3,0.3,0.3], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0],[0,0,1],[0,1,1],[1,1,1],[1,0,1]],
       "triangles": [
         [0,4,7],[7,3,0],
@@ -22,7 +22,7 @@ var RES = function() {
   ];
 
   var lid = {
-      "material": {"ambient": [0.1,0.1,0.1], "diffuse": [1,1,1], "specular": [0.3,0.3,0.3], "n":17},
+      "material": {"ambient": [0.1,0.1,0.1], "diffuse": [0,0,1], "specular": [0.3,0.3,0.3], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0]],
       "triangles": [[1,0,3],[3,2,1]]
     };

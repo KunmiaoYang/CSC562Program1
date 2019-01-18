@@ -82,48 +82,6 @@ function rayEllipsoidIntersect(ray,ellipsoid,clipVal) {
     }
 } // end raySphereIntersect
 
-// draw a pixel at x,y using color
-function drawPixel(imagedata,x,y,color) {
-    try {
-        if ((typeof(x) !== "number") || (typeof(y) !== "number"))
-            throw "drawpixel location not a number";
-        else if ((x<0) || (y<0) || (x>=imagedata.width) || (y>=imagedata.height))
-            throw "drawpixel location outside of image";
-        else if (color instanceof Color) {
-            var pixelindex = (y*imagedata.width + x) * 4;
-            imagedata.data[pixelindex] = color[0];
-            imagedata.data[pixelindex+1] = color[1];
-            imagedata.data[pixelindex+2] = color[2];
-            imagedata.data[pixelindex+3] = color[3];
-        } else
-            throw "drawpixel color is not a Color";
-    } // end try
-
-    catch(e) {
-        console.log(e);
-    }
-} // end drawPixel
-
-// draw random pixels
-function drawRandPixels(context) {
-    var c = new Color(0,0,0,0); // the color at the pixel: black
-    var w = context.canvas.width;
-    var h = context.canvas.height;
-    var imagedata = context.createImageData(w,h);
-    const PIXEL_DENSITY = 0.01;
-    var numPixels = (w*h)*PIXEL_DENSITY;
-
-    // Loop over 1% of the pixels in the image
-    for (var x=0; x<numPixels; x++) {
-        c.change(Math.random()*255,Math.random()*255,
-            Math.random()*255,255); // rand color
-        drawPixel(imagedata,
-            Math.floor(Math.random()*w),
-            Math.floor(Math.random()*h),
-                c);
-    } // end for x
-    context.putImageData(imagedata, 0, 0);
-} // end draw random pixels
 
 // put random points in the ellipsoids from the class github
 function drawRandPixelsInInputEllipsoids(context) {
@@ -166,7 +124,7 @@ function drawRandPixelsInInputEllipsoids(context) {
                     x = Math.random()*2 - 1; // in unit square
                     y = Math.random()*2 - 1; // in unit square
                 } while (Math.sqrt(x*x + y*y) > 1) // a circle is also an ellipse
-                drawPixel(imagedata,
+                VIEW.drawPixel(imagedata,
                     cx+Math.round(x*ellipsoidXRadius),
                     cy+Math.round(y*ellipsoidYRadius),c);
                 //console.log("color: ("+c.r+","+c.g+","+c.b+")");
@@ -247,10 +205,10 @@ function rayCastEllipsoids(context) {
                     if (isect.exists) // there is an intersect
                         if (isect.t < closestT) { // it is the closest yet
                             closestT = isect.t; // record closest t yet
-                            c = SHADER.rayTracing(isect,e,RES.inputLights,inputEllipsoids);
+                            SHADER.rayTracing(isect,e,RES.inputLights,inputEllipsoids,c);
                         } // end if closest yet
                 } // end for ellipsoids
-                drawPixel(imagedata,x,y,c);
+                VIEW.drawPixel(imagedata,x,y,c);
                 wx += wxd;
                 //console.log(""); // blank per pixel
             } // end for x
@@ -299,7 +257,7 @@ function framelessRayCastSpheres(context) {
                     if (isect.exists) // there is an intersect
                         if (isect.t < closestT) { // it is the closest yet
                             closestT = isect.t; // record closest t yet
-                            c = SHADER.rayTracing(isect,s,RES.inputLights,inputSpheres);
+                            SHADER.rayTracing(isect,s,RES.inputLights,inputSpheres,c);
                         } // end if closest yet
                 } // end for spheres
                 imagedata.data[0] = c[0];
@@ -330,81 +288,27 @@ function framelessRayCastSpheres(context) {
     } // end if spheres found
 } // end frameless ray cast spheres
 
-/********************************************* My Code *********************************************/
-// use ray casting with bodies to get pixel colors
-function rayCastBodies(context, shader) {
-    var w = context.canvas.width;
-    var h = context.canvas.height;
-    var imagedata = context.createImageData(w,h);
-    // console.log("casting rays");
-
-    if (RES.bodies != String.null) {
-        var x = 0; var y = 0; // pixel coord init
-        var n = RES.bodies.length; // the number of spheres
-        var Dir = new Vector(0,0,0); // init the ray direction
-        var closestT = Number.MAX_VALUE; // init the closest t value
-        var c = new Color(0,0,0,0); // init the pixel color
-        var isect = {}; // init the intersection
-        //console.log("number of ellipsoids: " + n);
-
-        // Loop over the pixels and ellipsoids, intersecting them
-        var wx = CONST.WIN_LEFT; // init world pixel xcoord
-        var wxd = (CONST.WIN_RIGHT-CONST.WIN_LEFT) * 1/(w-1); // world pixel x differential
-        var wy = CONST.WIN_TOP; // init world pixel ycoord
-        var wyd = (CONST.WIN_BOTTOM-CONST.WIN_TOP) * 1/(h-1); // world pixel y differential
-        for (y=0; y<h; y++) {
-            wx = CONST.WIN_LEFT; // init w
-            for (x=0; x<h; x++) {
-                closest = {
-                  exists: false,
-                  t: Number.MAX_VALUE, // no closest t for this pixel
-                }
-                c.change(0,0,0,255); // set pixel to background color
-                Dir.copy(Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye)); // set ray direction
-                //Dir.toConsole("Dir: ");
-                for (var e=0; e<n; e++) {
-                // for (var e=0; e<1; e++) {
-                    isect = RES.bodies[e].rayIntersect([CONST.Eye,Dir],1);
-                    if (isect.exists && // there is an intersect
-                        isect.t < closest.t) { // it is the closest yet
-                            closest.t = isect.t; // record closest t yet
-                            closest.exists = true;
-                            closest.xyz = isect.xyz;
-                            closest.id = e;
-                            // c = shader(isect,e,RES.inputLights,RES.bodies);
-                        } // end if closest yet
-                } // end for ellipsoids
-                if (closest.exists) c = shader(closest,closest.id,RES.inputLights,RES.bodies);
-                drawPixel(imagedata,x,y,c);
-                wx += wxd;
-                //console.log(""); // blank per pixel
-            } // end for x
-            wy += wyd;
-        } // end for y
-        context.putImageData(imagedata, 0, 0);
-    } // end if ellipsoids found
-} // end ray cast bodies
-
 /* main -- here is where execution begins after window load */
 function main() {
-    // Load resource
-    RES.loadBodies(RES.bodies, RES.bounceBodies);
+  // Load resource
+  RES.loadBodies(RES.bodies, RES.bounceBodies);
 
-    // Get the canvas and context
-    var canvas = document.getElementById("viewport");
-    var context = canvas.getContext("2d");
+  // Get the canvas and context
+  var canvas = document.getElementById("viewport");
+  var context = canvas.getContext("2d");
 
-    // Create the image
-    //drawRandPixels(context);
-      // shows how to draw pixels
+  // Create the image
+  //VIEW.drawRandPixels(context);
+    // shows how to draw pixels
 
-    //drawRandPixelsInInputSpheres(context);
-      // shows how to draw pixels and read input file
+  //drawRandPixelsInInputSpheres(context);
+    // shows how to draw pixels and read input file
 
-    //drawInputSpheresUsingArcs(context);
-      // shows how to read input file, but not how to draw pixels
+  //drawInputSpheresUsingArcs(context);
+    // shows how to read input file, but not how to draw pixels
 
-    rayCastBodies(context, SHADER.rayTracing);
+  // rayCastBodies(context, SHADER.rayTracing);
+  VIEW.eachPixel(context, RES.bodies, VIEW.rayTracing(new Color(0,0,0,0)));
 
-    //framelessRayCastSpheres(context);
+  //framelessRayCastSpheres(context);
 }

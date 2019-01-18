@@ -6,16 +6,10 @@ class Vector {
 
     // sets the components of a vector
     set(x,y,z) {
-        try {
-            if ((typeof(x) !== "number") || (typeof(y) !== "number") || (typeof(z) !== "number"))
-                throw "vector component not a number";
-            else
-                this.x = x; this.y = y; this.z = z;
-        } // end try
-
-        catch(e) {
-            console.log(e);
-        }
+      if ((typeof(x) !== "number") || (typeof(y) !== "number") || (typeof(z) !== "number"))
+          throw "vector component not a number";
+      else
+          this.x = x; this.y = y; this.z = z;
     } // end vector set
 
     // copy the passed vector into this one
