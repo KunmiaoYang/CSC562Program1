@@ -50,11 +50,11 @@ var RES = function() {
         } else
             return JSON.parse(httpReq.response);
     }, // end get input ellipsoids
-    // inputLights: getJSONFile(CONST.INPUT_LIGHTS_URL,"lights"),
+    // inputLights: getJSONFile(CONST.INPUT_LIGHTS_URL,"lights").map(PointLight),
     inputLights: [
       // {"x": 2, "y": 2, "z": 0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
       {"x": 2, "y": 2, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
       // {"x": 2, "y": 4, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
-    ],
+    ].map(PointLight),
   };
 }();

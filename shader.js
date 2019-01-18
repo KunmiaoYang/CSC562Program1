@@ -26,41 +26,7 @@ var SHADER = function() {
                     c[1] += lights[l].ambient[1] * body.ambient[1]; // ambient term g
                     c[2] += lights[l].ambient[2] * body.ambient[2]; // ambient term b
 
-                    // check each other sphere to see if it occludes light
-                    Lloc.set(lights[l].x,lights[l].y,lights[l].z);
-                    var L = Vector.normalize(Vector.subtract(Lloc,isect.xyz)); // light vector unnorm'd
-                    // L.toConsole("L: ");
-                    // console.log("isect: "+isect.xyz.x+", "+isect.xyz.y+", "+isect.xyz.z);
-
-                    // if light isn't occluded
-                    var shadowed = (CONST.RENDER_METHOD == CONST.renderTypes.LIT_SHADOWS) ?
-                                    GEO.isLightOccluded(L,isect.xyz,isectId,bodies) : false;
-                    if (!shadowed) {
-                        // console.log("no occlusion found");
-
-                        // add in the diffuse light
-                        var N = body.calcNormVec(isect); // surface normal
-                        var diffFactor = Math.max(0,Vector.dot(N,L));
-                        if (diffFactor > 0) {
-                            c[0] += lights[l].diffuse[0] * body.diffuse[0] * diffFactor;
-                            c[1] += lights[l].diffuse[1] * body.diffuse[1] * diffFactor;
-                            c[2] += lights[l].diffuse[2] * body.diffuse[2] * diffFactor;
-                        } // end nonzero diffuse factor
-
-                        // add in the specular light
-                        var V = Vector.normalize(Vector.subtract(CONST.Eye,isect.xyz)); // view vector
-                        var H = Vector.normalize(Vector.add(L,V)); // half vector
-                        var specFactor = Math.max(0,Vector.dot(N,H));
-                        if (specFactor > 0) {
-                            var newSpecFactor = specFactor;
-                            for (var e=1; e<bodies[isectId].n; e++) // mult by itself if needed
-                                newSpecFactor *= specFactor;
-                            c[0] += lights[l].specular[0] * body.specular[0] * newSpecFactor; // specular term
-                            c[1] += lights[l].specular[1] * body.specular[1] * newSpecFactor; // specular term
-                            c[2] += lights[l].specular[2] * body.specular[2] * newSpecFactor; // specular term
-                        } // end nonzero specular factor
-
-                    } // end if light not occluded
+                    lights[l].castLight(isect, isectId, bodies, Lloc, c);
                 } // end for lights
 
                 c[0] = 255 * Math.min(1,c[0]); // clamp max value to 1
