@@ -155,90 +155,9 @@ function drawInputEllipsoidsUsingArcs(context) {
 } // end draw input ellipsoids
 
 
-// color the passed intersection and ellipsoid
-function shadeIsect(isect,isectEllipsoid,lights,ellipsoids) {
-    try {
-        if (   !(isect instanceof Object) || !(typeof(isectEllipsoid) === "number")
-            || !(lights instanceof Array) || !(ellipsoids instanceof Array))
-            throw "shadeIsect: bad parameter passed";
-        else if (CONST.RENDER_METHOD == CONST.renderTypes.ISECT_ONLY) {
-            var r = ellipsoids[isectEllipsoid].diffuse[0];
-            var g = ellipsoids[isectEllipsoid].diffuse[1];
-            var b = ellipsoids[isectEllipsoid].diffuse[2];
-            return(new Color(255*r,255*g,255*b,255));
-        } else { // if not just rendering intersects
-            var c = new Color(0,0,0,255); // init the ellipsoid color to black
-            var ellipsoid = ellipsoids[isectEllipsoid]; // ellipsoid intersected by eye
-            // console.log("shading pixel");
-
-            // add light for each source
-            var lightOccluded = false; // if an occluder is found
-            var Lloc = new Vector(0,0,0);
-            for (var l=0; l<lights.length; l++) {
-
-                // add in the ambient light
-                c[0] += lights[l].ambient[0] * ellipsoid.ambient[0]; // ambient term r
-                c[1] += lights[l].ambient[1] * ellipsoid.ambient[1]; // ambient term g
-                c[2] += lights[l].ambient[2] * ellipsoid.ambient[2]; // ambient term b
-
-                // check each other sphere to see if it occludes light
-                Lloc.set(lights[l].x,lights[l].y,lights[l].z);
-                var L = Vector.normalize(Vector.subtract(Lloc,isect.xyz)); // light vector unnorm'd
-                // L.toConsole("L: ");
-                // console.log("isect: "+isect.xyz.x+", "+isect.xyz.y+", "+isect.xyz.z);
-
-                // if light isn't occluded
-                var shadowed = (CONST.RENDER_METHOD == CONST.renderTypes.LIT_SHADOWS) ?
-                                GEO.isLightOccluded(L,isect.xyz,isectEllipsoid,ellipsoids) : false;
-                if (!shadowed) {
-                    // console.log("no occlusion found");
-
-                    // add in the diffuse light
-                    var isectMCtr = Vector.subtract(isect.xyz,new Vector(ellipsoid.x,ellipsoid.y,ellipsoid.z));
-                    var derivCoeffs = new Vector(ellipsoid.a*ellipsoid.a,ellipsoid.b*ellipsoid.b,ellipsoid.c*ellipsoid.c);
-                    var derivCoeffs = Vector.divide(new Vector(2,2,2),derivCoeffs);
-                    var N = Vector.normalize(Vector.multiply(isectMCtr,derivCoeffs)); // surface normal
-                    var diffFactor = Math.max(0,Vector.dot(N,L));
-                    if (diffFactor > 0) {
-                        c[0] += lights[l].diffuse[0] * ellipsoid.diffuse[0] * diffFactor;
-                        c[1] += lights[l].diffuse[1] * ellipsoid.diffuse[1] * diffFactor;
-                        c[2] += lights[l].diffuse[2] * ellipsoid.diffuse[2] * diffFactor;
-                    } // end nonzero diffuse factor
-
-                    // add in the specular light
-                    var V = Vector.normalize(Vector.subtract(CONST.Eye,isect.xyz)); // view vector
-                    var H = Vector.normalize(Vector.add(L,V)); // half vector
-                    var specFactor = Math.max(0,Vector.dot(N,H));
-                    if (specFactor > 0) {
-                        var newSpecFactor = specFactor;
-                        for (var e=1; e<ellipsoids[isectEllipsoid].n; e++) // mult by itself if needed
-                            newSpecFactor *= specFactor;
-                        c[0] += lights[l].specular[0] * ellipsoid.specular[0] * newSpecFactor; // specular term
-                        c[1] += lights[l].specular[1] * ellipsoid.specular[1] * newSpecFactor; // specular term
-                        c[2] += lights[l].specular[2] * ellipsoid.specular[2] * newSpecFactor; // specular term
-                    } // end nonzero specular factor
-
-                } // end if light not occluded
-            } // end for lights
-
-            c[0] = 255 * Math.min(1,c[0]); // clamp max value to 1
-            c[1] = 255 * Math.min(1,c[1]); // clamp max value to 1
-            c[2] = 255 * Math.min(1,c[2]); // clamp max value to 1
-
-            return(c);
-        } // if not just rendering isect
-    } // end throw
-
-    catch(e) {
-        console.log(e);
-        return(Object.null);
-    }
-}
-
 // use ray casting with ellipsoids to get pixel colors
 function rayCastEllipsoids(context) {
     var inputEllipsoids = RES.getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids");
-    var inputLights = RES.getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
     var w = context.canvas.width;
     var h = context.canvas.height;
     var imagedata = context.createImageData(w,h);
@@ -271,7 +190,7 @@ function rayCastEllipsoids(context) {
                     if (isect.exists) // there is an intersect
                         if (isect.t < closestT) { // it is the closest yet
                             closestT = isect.t; // record closest t yet
-                            c = shadeIsect(isect,e,inputLights,inputEllipsoids);
+                            c = SHADER.rayTracing(isect,e,RES.inputLights,inputEllipsoids);
                         } // end if closest yet
                 } // end for ellipsoids
                 drawPixel(imagedata,x,y,c);
@@ -287,9 +206,8 @@ function rayCastEllipsoids(context) {
 // use frameless ray casting with spheres to get pixel colors
 function framelessRayCastSpheres(context) {
     var inputSpheres = RES.getJSONFile(CONST.INPUT_SPHERES_URL,"spheres");
-    var inputLights = RES.getJSONFile(CONST.INPUT_LIGHTS_URL,"lights");
 
-    if ((inputSpheres != String.null) && (inputLights != String.null)) {
+    if ((inputSpheres != String.null) && (RES.inputLights != String.null)) {
         var n = inputSpheres.length; // the number of spheres
         var w = context.canvas.width;
         var h = context.canvas.height;
@@ -324,7 +242,7 @@ function framelessRayCastSpheres(context) {
                     if (isect.exists) // there is an intersect
                         if (isect.t < closestT) { // it is the closest yet
                             closestT = isect.t; // record closest t yet
-                            c = shadeIsect(isect,s,inputLights,inputSpheres);
+                            c = SHADER.rayTracing(isect,s,RES.inputLights,inputSpheres);
                         } // end if closest yet
                 } // end for spheres
                 imagedata.data[0] = c[0];
@@ -355,11 +273,57 @@ function framelessRayCastSpheres(context) {
     } // end if spheres found
 } // end frameless ray cast spheres
 
+// use ray casting with bodies to get pixel colors
+function rayCastBodies(context, shader) {
+    var inputBodies =
+      RES.getJSONFile(CONST.INPUT_SPHERES_URL,"ellipsoids").map(GEO.createEllipsoid);
+    var w = context.canvas.width;
+    var h = context.canvas.height;
+    var imagedata = context.createImageData(w,h);
+    // console.log("casting rays");
+    console.log("bodies", inputBodies);
 
+    if (inputBodies != String.null) {
+        var x = 0; var y = 0; // pixel coord init
+        var n = inputBodies.length; // the number of spheres
+        var Dir = new Vector(0,0,0); // init the ray direction
+        var closestT = Number.MAX_VALUE; // init the closest t value
+        var c = new Color(0,0,0,0); // init the pixel color
+        var isect = {}; // init the intersection
+        //console.log("number of ellipsoids: " + n);
 
+        // Loop over the pixels and ellipsoids, intersecting them
+        var wx = CONST.WIN_LEFT; // init world pixel xcoord
+        var wxd = (CONST.WIN_RIGHT-CONST.WIN_LEFT) * 1/(w-1); // world pixel x differential
+        var wy = CONST.WIN_TOP; // init world pixel ycoord
+        var wyd = (CONST.WIN_BOTTOM-CONST.WIN_TOP) * 1/(h-1); // world pixel y differential
+        for (y=0; y<h; y++) {
+            wx = CONST.WIN_LEFT; // init w
+            for (x=0; x<h; x++) {
+                closestT = Number.MAX_VALUE; // no closest t for this pixel
+                c.change(0,0,0,255); // set pixel to background color
+                Dir.copy(Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye)); // set ray direction
+                //Dir.toConsole("Dir: ");
+                for (var e=0; e<n; e++) {
+                // for (var e=0; e<1; e++) {
+                    isect = inputBodies[e].rayIntersect([CONST.Eye,Dir],1);
+                    if (isect.exists && // there is an intersect
+                        isect.t < closestT) { // it is the closest yet
+                            closestT = isect.t; // record closest t yet
+                            c = shader(isect,e,RES.inputLights,inputBodies);
+                        } // end if closest yet
+                } // end for ellipsoids
+                drawPixel(imagedata,x,y,c);
+                wx += wxd;
+                //console.log(""); // blank per pixel
+            } // end for x
+            wy += wyd;
+        } // end for y
+        context.putImageData(imagedata, 0, 0);
+    } // end if ellipsoids found
+} // end ray cast bodies
 
 /* main -- here is where execution begins after window load */
-
 function main() {
 
     // Get the canvas and context
@@ -376,7 +340,7 @@ function main() {
     //drawInputSpheresUsingArcs(context);
       // shows how to read input file, but not how to draw pixels
 
-    rayCastEllipsoids(context);
+    rayCastBodies(context, SHADER.rayTracing);
 
     //framelessRayCastSpheres(context);
 }
