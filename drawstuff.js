@@ -289,18 +289,18 @@ function framelessRayCastSpheres(context) {
 } // end frameless ray cast spheres
 
 var rayTracing = function(context) {
-  VIEW.imagedata = VIEW.createImageData(context);
+  VIEW.init(context);
   VIEW.eachPixel(VIEW.imagedata, RES.bodies,
     VIEW.rayTracing(new Color(0,0,0,0), SHADER.rayTracing));
   context.putImageData(VIEW.imagedata, 0, 0);
 };
 
-var addBRDF = function(context, sample) {
+var addBRDF = function(context, shader, sample) {
   var i = 0;
   var inter;
   var addSample = function() {
     VIEW.eachPixel(VIEW.imagedata, RES.bodies,
-                   VIEW.pathTracing(new Color(0,0,0,0), sample));
+                   VIEW.pathTracing(new Color(0,0,0,0), shader, sample));
     VIEW.context.putImageData(VIEW.imagedata, 0, 0);
     console.log("Sample: ", i);
     if (++i >= sample) clearInterval(inter);
@@ -308,12 +308,12 @@ var addBRDF = function(context, sample) {
   inter = setInterval(addSample, 100);
 };
 
-var pathTracing = function(context, sample) {
-  VIEW.imagedata = VIEW.createImageData(context);
+var pathTracing = function(context, directShader, indirectShader, sample) {
+  VIEW.init(context);
   VIEW.eachPixel(VIEW.imagedata, RES.bodies,
-    VIEW.rayTracing(new Color(0,0,0,0), SHADER.BRDF));
+    VIEW.rayTracing(new Color(0,0,0,0), directShader));
   context.putImageData(VIEW.imagedata, 0, 0);
-  addBRDF(context, sample);
+  addBRDF(context, indirectShader, sample);
 };
 
 /* main -- here is where execution begins after window load */
@@ -336,7 +336,7 @@ function main() {
     // shows how to read input file, but not how to draw pixels
 
   // rayTracing(VIEW.context);
-  pathTracing(VIEW.context, CONST.SAMPLE_COUNT);
+  pathTracing(VIEW.context, SHADER.rayTracing, SHADER.BRDF, CONST.SAMPLE_COUNT);
 
   //framelessRayCastSpheres(context);
 }

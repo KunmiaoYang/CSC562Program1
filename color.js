@@ -37,6 +37,10 @@ class Color {
         }
     } // end Color change method
 
+  copy() {
+    return new Color(this[0],this[1],this[2],this[3]);
+  }
+
   clamp(limit) {
     this[0] = Math.min(limit,this[0]); // clamp max value to 1
     this[1] = Math.min(limit,this[1]); // clamp max value to 1

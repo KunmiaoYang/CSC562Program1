@@ -15,7 +15,7 @@ var VIEW = function() {
         throw "drawpixel color is not a Color";
   }; // end drawPixel
 
-  var addColor = function(imagedata,x,y,color) {
+  var addColor = function(imagedata,x,y,colorMap,color) {
     if ((typeof(x) !== "number") || (typeof(y) !== "number"))
         throw "pixel location not a number";
     else if ((x<0) || (y<0) || (x>=imagedata.width) || (y>=imagedata.height))
@@ -23,8 +23,8 @@ var VIEW = function() {
     else if (color instanceof Color) {
       var pixelindex = (y*imagedata.width + x) * 4;
       for (var i = 0; i < 3; i++) {
-        imagedata.data[pixelindex + i] =
-          Math.min(255, imagedata.data[pixelindex + i] + color[i]);
+        colorMap[x][y][i] = Math.min(1, colorMap[x][y][i] + color[i]);
+        imagedata.data[pixelindex + i] = colorMap[x][y][i] * 255;
       }
     } else
         throw "drawpixel color is not a Color";
@@ -34,8 +34,9 @@ var VIEW = function() {
     canvas: {},
     context: {},
     imagedata: {},
-    createImageData: function(context) {
-      return context.createImageData(context.canvas.width,context.canvas.height);
+    colorMap: [],
+    init: function(context) {
+      VIEW.imagedata = context.createImageData(context.canvas.width,context.canvas.height);
     },
     // draw a pixel at x,y using color
     drawPixel: drawPixel,
@@ -95,10 +96,12 @@ var VIEW = function() {
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
         if (closest.exists) shader(closest,closest.id,RES.inputLights,RES.bodies,c);
-        drawPixel(imagedata,x,y,c.clamp(1).scale3(255));
+        if (!VIEW.colorMap[x]) VIEW.colorMap[x] = [];
+        VIEW.colorMap[x][y] = c.clamp(1).copy();
+        drawPixel(imagedata,x,y,c.scale3(255));
       };
     },
-    pathTracing: function(c, sample) {
+    pathTracing: function(c, shader, sample) {
       return function(imagedata,x,y,wx,wy) {
         c.change(0,0,0,255); // set pixel to background color
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
@@ -108,18 +111,12 @@ var VIEW = function() {
           var N = RES.bodies[closest.id].calcNormVec(closest); // surface normal
           var V = GEO.randomDir(N);
           var isect = GEO.closestIntersect([closest.xyz, V],0,closest.id,RES.bounceBodies);
-          // if (x == 10 && y == 500) {
-          //   console.log("N", N);
-          //   console.log("V", V);
-          //   console.log("closest", closest);
-          //   console.log("isect", isect);
-          // }
           if (isect.exists)
-            SHADER.BRDF(isect,isect.id,RES.inputLights,RES.bounceBodies,c);
+            shader(isect,isect.id,RES.inputLights,RES.bounceBodies,c);
           else console.log("missing",isect);
         }
-        addColor(imagedata,x,y,c.scale3(255/sample));
-        // addColor(imagedata,x,y,c.scale3(511/sample));
+        addColor(imagedata,x,y,VIEW.colorMap,c.scale3(1/sample));
+        // addColor(imagedata,x,y,c.scale3(2/sample));
       };
     },
   };
