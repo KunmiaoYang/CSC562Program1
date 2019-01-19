@@ -20,6 +20,6 @@ var CONST = function() {
     renderTypes: renderTypes,
     RENDER_METHOD: renderTypes.LIT_SHADOWS, // show intersections unlit in white
     Eye: new Vector(0.5,0.5,-0.5), // set the eye position
-    SAMPLE_COUNT: 5,
+    SAMPLE_COUNT: 100,
   };
 }();

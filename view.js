@@ -89,12 +89,12 @@ var VIEW = function() {
         } // end for y
       }
     },
-    rayTracing: function(c) {
+    rayTracing: function(c, shader) {
       return function(imagedata,x,y,wx,wy) {
         c.change(0,0,0,255); // set pixel to background color
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
-        var closest = GEO.closestIntersect([CONST.Eye,Dir],1,RES.bodies);
-        if (closest.exists) SHADER.rayTracing(closest,closest.id,RES.inputLights,RES.bodies,c);
+        var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
+        if (closest.exists) shader(closest,closest.id,RES.inputLights,RES.bodies,c);
         drawPixel(imagedata,x,y,c.clamp(1).scale3(255));
       };
     },
@@ -102,10 +102,24 @@ var VIEW = function() {
       return function(imagedata,x,y,wx,wy) {
         c.change(0,0,0,255); // set pixel to background color
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
-        var closest = GEO.closestIntersect([CONST.Eye,Dir],1,RES.bodies);
+        var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
         // TODO: use diffusion instead
-        if (closest.exists) SHADER.BRDF(closest,closest.id,RES.inputLights,RES.bodies,c);
+        if (closest.exists) {
+          var N = RES.bodies[closest.id].calcNormVec(closest); // surface normal
+          var V = GEO.randomDir(N);
+          var isect = GEO.closestIntersect([closest.xyz, V],0,closest.id,RES.bounceBodies);
+          // if (x == 10 && y == 500) {
+          //   console.log("N", N);
+          //   console.log("V", V);
+          //   console.log("closest", closest);
+          //   console.log("isect", isect);
+          // }
+          if (isect.exists)
+            SHADER.BRDF(isect,isect.id,RES.inputLights,RES.bounceBodies,c);
+          else console.log("missing",isect);
+        }
         addColor(imagedata,x,y,c.scale3(255/sample));
+        // addColor(imagedata,x,y,c.scale3(511/sample));
       };
     },
   };

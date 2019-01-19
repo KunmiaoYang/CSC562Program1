@@ -31,19 +31,20 @@ var GEO = function() {
       for (var e = 0, occluderIsect = {}; e < bodies.length; e++) {
         if (e == isect) continue;
         occluderIsect = bodies[e].rayIntersect([isectPos,L],0);
-        if (occluderIsect.exists && occluderIsect.t <= 1) {
+        if (occluderIsect.exists && occluderIsect.t < 1) {
           return true;
         }
       }
       return false;
     }, // end is light occluded
-    closestIntersect: function(ray, clipVal, bodies) {
+    closestIntersect: function(ray, clipVal, from, bodies) {
       var closest = {
         exists: false,
         t: Number.MAX_VALUE, // no closest t for this pixel
       }
       //Dir.toConsole("Dir: ");
       for (var e=0, n = bodies.length, isect = {}; e<n; e++) {
+        if (e == from) continue;
         isect = bodies[e].rayIntersect(ray, clipVal);
         if (isect.exists && // there is an intersect
             isect.t < closest.t) { // it is the closest yet
@@ -55,6 +56,21 @@ var GEO = function() {
         } // end if closest yet
       } // end for ellipsoids
       return closest;
+    },
+    randomDir: function(n) {
+      var phi = Math.PI*Math.random();
+      var thi = 2*Math.PI*Math.random();
+      var v = new Vector(
+        Math.sin(phi)*Math.cos(thi),
+        Math.cos(phi),
+        Math.sin(phi)*Math.sin(thi)
+      );
+      if (Vector.dot(n, v) < 0) {
+        v.x = -v.x;
+        v.y = -v.y;
+        v.z = -v.z;
+      }
+      return v;
     },
   };
 }();

@@ -76,6 +76,7 @@ var SHADER = function() {
             lights[l].BRDF(bodies[isectId].calcNormVec(isect), Vector.normalize(L), bodies[isectId], c);
           } // end if light not occluded
         } // end for lights
+        // if (isectId > 14) console.log("lid color", c);
       } // if not just rendering isect
     },
   };
