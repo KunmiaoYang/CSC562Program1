@@ -288,14 +288,35 @@ function framelessRayCastSpheres(context) {
     } // end if spheres found
 } // end frameless ray cast spheres
 
+var rayTracing = function(context) {
+  var pixel = context.createImageData(1,1);
+  VIEW.imagedata = VIEW.createImageData(context);
+  VIEW.eachPixel(VIEW.imagedata, RES.bodies,
+    VIEW.rayTracing(new Color(0,0,0,0)));
+  context.putImageData(VIEW.imagedata, 0, 0);
+};
+
+var addBRDF = function(context, sample) {
+  var i = 0;
+  var inter;
+  var addSample = function() {
+    VIEW.eachPixel(VIEW.imagedata, RES.bodies,
+                   VIEW.pathTracing(new Color(0,0,0,0), sample));
+    VIEW.context.putImageData(VIEW.imagedata, 0, 0);
+    console.log("Sample: ", i);
+    if (++i >= sample) clearInterval(inter);
+  };
+  inter = setInterval(addSample, 100);
+};
+
 /* main -- here is where execution begins after window load */
 function main() {
   // Load resource
   RES.loadBodies(RES.bodies, RES.bounceBodies);
 
   // Get the canvas and context
-  var canvas = document.getElementById("viewport");
-  var context = canvas.getContext("2d");
+  VIEW.canvas = document.getElementById("viewport");
+  VIEW.context = VIEW.canvas.getContext("2d");
 
   // Create the image
   //VIEW.drawRandPixels(context);
@@ -307,8 +328,8 @@ function main() {
   //drawInputSpheresUsingArcs(context);
     // shows how to read input file, but not how to draw pixels
 
-  // rayCastBodies(context, SHADER.rayTracing);
-  VIEW.eachPixel(context, RES.bodies, VIEW.rayTracing(new Color(0,0,0,0)));
+  rayTracing(VIEW.context);
+  addBRDF(VIEW.context, CONST.SAMPLE_COUNT);
 
   //framelessRayCastSpheres(context);
 }

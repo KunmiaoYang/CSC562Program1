@@ -1,27 +1,42 @@
 var VIEW = function() {
   // draw a pixel at x,y using color
   var drawPixel = function(imagedata,x,y,color) {
-      try {
-          if ((typeof(x) !== "number") || (typeof(y) !== "number"))
-              throw "drawpixel location not a number";
-          else if ((x<0) || (y<0) || (x>=imagedata.width) || (y>=imagedata.height))
-              throw "drawpixel location outside of image";
-          else if (color instanceof Color) {
-              var pixelindex = (y*imagedata.width + x) * 4;
-              imagedata.data[pixelindex] = color[0];
-              imagedata.data[pixelindex+1] = color[1];
-              imagedata.data[pixelindex+2] = color[2];
-              imagedata.data[pixelindex+3] = color[3];
-          } else
-              throw "drawpixel color is not a Color";
-      } // end try
-
-      catch(e) {
-          console.log(e);
-      }
+    if ((typeof(x) !== "number") || (typeof(y) !== "number"))
+        throw "drawpixel location not a number";
+    else if ((x<0) || (y<0) || (x>=imagedata.width) || (y>=imagedata.height))
+        throw "drawpixel location outside of image";
+    else if (color instanceof Color) {
+        var pixelindex = (y*imagedata.width + x) * 4;
+        imagedata.data[pixelindex] = color[0];
+        imagedata.data[pixelindex+1] = color[1];
+        imagedata.data[pixelindex+2] = color[2];
+        imagedata.data[pixelindex+3] = color[3];
+    } else
+        throw "drawpixel color is not a Color";
   }; // end drawPixel
 
+  var addColor = function(imagedata,x,y,color) {
+    if ((typeof(x) !== "number") || (typeof(y) !== "number"))
+        throw "pixel location not a number";
+    else if ((x<0) || (y<0) || (x>=imagedata.width) || (y>=imagedata.height))
+        throw "pixel location outside of image";
+    else if (color instanceof Color) {
+      var pixelindex = (y*imagedata.width + x) * 4;
+      for (var i = 0; i < 3; i++) {
+        imagedata.data[pixelindex + i] =
+          Math.min(255, imagedata.data[pixelindex + i] + color[i]);
+      }
+    } else
+        throw "drawpixel color is not a Color";
+  };
+
   return {
+    canvas: {},
+    context: {},
+    imagedata: {},
+    createImageData: function(context) {
+      return context.createImageData(context.canvas.width,context.canvas.height);
+    },
     // draw a pixel at x,y using color
     drawPixel: drawPixel,
     // draw random pixels
@@ -55,10 +70,9 @@ var VIEW = function() {
 
         return ({"x": x, "y": y, "wx": wx, "wy": wy});
     },
-    eachPixel: function(context, bodies, callback) {
-      var w = context.canvas.width;
-      var h = context.canvas.height;
-      var imagedata = context.createImageData(w,h);
+    eachPixel: function(imagedata, bodies, callback) {
+      var w = imagedata.width;
+      var h = imagedata.height;
       // console.log("casting rays");
 
       if (bodies != String.null) {
@@ -73,7 +87,6 @@ var VIEW = function() {
               callback(imagedata,x,y,wx,wy);
             } // end for x
         } // end for y
-        context.putImageData(imagedata, 0, 0);
       }
     },
     rayTracing: function(c) {
@@ -82,7 +95,17 @@ var VIEW = function() {
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,RES.bodies);
         if (closest.exists) SHADER.rayTracing(closest,closest.id,RES.inputLights,RES.bodies,c);
-        drawPixel(imagedata,x,y,c);
+        drawPixel(imagedata,x,y,c.clamp(1).scale3(255));
+      };
+    },
+    pathTracing: function(c, sample) {
+      return function(imagedata,x,y,wx,wy) {
+        c.change(0,0,0,255); // set pixel to background color
+        var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
+        var closest = GEO.closestIntersect([CONST.Eye,Dir],1,RES.bodies);
+        // TODO: use diffusion instead
+        if (closest.exists) SHADER.BRDF(closest,closest.id,RES.inputLights,RES.bodies,c);
+        addColor(imagedata,x,y,c.scale3(255/sample));
       };
     },
   };

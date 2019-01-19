@@ -17,7 +17,6 @@ var SHADER = function() {
                 // console.log("shading pixel");
 
                 // add light for each source
-                var lightOccluded = false; // if an occluder is found
                 var Lloc = new Vector(0,0,0);
                 for (var l=0; l<lights.length; l++) {
 
@@ -49,10 +48,6 @@ var SHADER = function() {
                     } // end if light not occluded
                 } // end for lights
 
-                c[0] = 255 * Math.min(1,c[0]); // clamp max value to 1
-                c[1] = 255 * Math.min(1,c[1]); // clamp max value to 1
-                c[2] = 255 * Math.min(1,c[2]); // clamp max value to 1
-
                 return;
             } // if not just rendering isect
         } // end throw
@@ -61,6 +56,27 @@ var SHADER = function() {
             console.log(e);
             return(Object.null);
         }
+    },
+
+    BRDF: function(isect,isectId,lights,bodies,c) {
+      if (   !(isect instanceof Object) || !(typeof(isectId) === "number")
+          || !(lights instanceof Array) || !(bodies instanceof Array))
+          throw "shadeIsect: bad parameter passed";
+      else {
+        // add light for each source
+        var Lloc = new Vector(0,0,0);
+        for (var l=0; l<lights.length; l++) {
+          // check each other sphere to see if it occludes light
+          lights[l].getLoc(Lloc);
+          var L = Vector.subtract(Lloc,isect.xyz); // light vector
+
+          // if light isn't occluded
+          if (!GEO.isLightOccluded(L,isect.xyz,isectId,bodies)) {
+            // add in the BRDF
+            lights[l].BRDF(bodies[isectId].calcNormVec(isect), Vector.normalize(L), bodies[isectId], c);
+          } // end if light not occluded
+        } // end for lights
+      } // if not just rendering isect
     },
   };
 }();

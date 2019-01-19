@@ -36,4 +36,18 @@ class Color {
             console.log(e);
         }
     } // end Color change method
+
+  clamp(limit) {
+    this[0] = Math.min(limit,this[0]); // clamp max value to 1
+    this[1] = Math.min(limit,this[1]); // clamp max value to 1
+    this[2] = Math.min(limit,this[2]); // clamp max value to 1
+    return this;
+  }
+
+  scale3(factor) {
+    this[0] *= factor;
+    this[1] *= factor;
+    this[2] *= factor;
+    return this;
+  }
 } // end color class
