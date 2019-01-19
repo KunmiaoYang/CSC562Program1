@@ -72,8 +72,15 @@ var SHADER = function() {
 
           // if light isn't occluded
           if (!GEO.isLightOccluded(L,isect.xyz,isectId,bodies)) {
-            // add in the BRDF
-            lights[l].BRDF(bodies[isectId].calcNormVec(isect), Vector.normalize(L), bodies[isectId], c);
+            var N = bodies[isectId].calcNormVec(isect); // surface normal
+            // add in the diffuse light
+            if (CONST.BRDFType & CONST.BRDF_TYPES.DIFFUSE)
+              lights[l].addDiffuse(N, Vector.normalize(L), bodies[isectId], c);
+            // add in the specular light
+            if (CONST.BRDFType & CONST.BRDF_TYPES.SPECULAR) {
+              var V = Vector.normalize(Vector.subtract(CONST.Eye,isect.xyz)); // view vector
+              lights[l].addSpecular(N, L, V, bodies[isectId], c);
+            }
           } // end if light not occluded
         } // end for lights
         // if (isectId > 14) console.log("lid color", c);

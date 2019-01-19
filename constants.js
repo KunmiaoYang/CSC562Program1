@@ -5,6 +5,10 @@ var CONST = function() {
           LIT: 2, // render lit color if intersect in pixel
           LIT_SHADOWS: 3 // render lit/shadowed color in intersect in pixel
       };
+  var BRDF_TYPES = {
+    DIFFUSE: 2,
+    SPECULAR: 4,
+  };
   return {
     WIN_Z: 0,
     WIN_LEFT: 0, WIN_RIGHT: 1,
@@ -20,6 +24,8 @@ var CONST = function() {
     renderTypes: renderTypes,
     RENDER_METHOD: renderTypes.LIT_SHADOWS, // show intersections unlit in white
     Eye: new Vector(0.5,0.5,-0.5), // set the eye position
+    BRDF_TYPES: BRDF_TYPES,
+    BRDFType: BRDF_TYPES.DIFFUSE,
     SAMPLE_COUNT: 10,
   };
 }();
