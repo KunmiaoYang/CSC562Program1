@@ -111,13 +111,22 @@ var VIEW = function() {
           var N = RES.bodies[closest.id].calcNormVec(closest); // surface normal
           var V = GEO.randomDir(N);
           var isect = GEO.closestIntersect([closest.xyz, V],0,closest.id,RES.bounceBodies);
-          if (isect.exists)
+          if (isect.exists) {
             shader(isect,isect.id,RES.inputLights,RES.bounceBodies,c);
-          else console.log("missing",isect);
+            SHADER.Lambertian(N, V, RES.bodies[closest.id], c);
+          } else console.log("missing",isect);
         }
         addColor(imagedata,x,y,VIEW.colorMap,c.scale3(1/sample));
         // addColor(imagedata,x,y,c.scale3(2/sample));
       };
+    },
+    roulette: function(c, shader) {
+        var rand = Math.random();
+        if (rand > CONST.ROULETTE_RATE) { // Stop
+
+        } else { // Continue bounce
+
+        }
     },
   };
 }();

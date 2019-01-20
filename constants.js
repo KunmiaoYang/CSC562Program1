@@ -25,7 +25,8 @@ var CONST = function() {
     RENDER_METHOD: renderTypes.LIT_SHADOWS, // show intersections unlit in white
     Eye: new Vector(0.5,0.5,-0.5), // set the eye position
     BRDF_TYPES: BRDF_TYPES,
-    BRDFType: BRDF_TYPES.DIFFUSE,
+    BRDFType: BRDF_TYPES.DIFFUSE | BRDF_TYPES.SPECULAR,
     SAMPLE_COUNT: 10,
+    ROULETTE_RATE: 0.5,
   };
 }();

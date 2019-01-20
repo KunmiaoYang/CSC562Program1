@@ -58,7 +58,7 @@ var SHADER = function() {
         }
     },
 
-    BRDF: function(isect,isectId,lights,bodies,c) {
+    pathTracing: function(isect,isectId,lights,bodies,c) {
       if (   !(isect instanceof Object) || !(typeof(isectId) === "number")
           || !(lights instanceof Array) || !(bodies instanceof Array))
           throw "shadeIsect: bad parameter passed";
@@ -86,5 +86,11 @@ var SHADER = function() {
         // if (isectId > 14) console.log("lid color", c);
       } // if not just rendering isect
     },
+
+    Lambertian: function(N, L, body, c) {
+      var dotLN = Math.max(0, Vector.dot(L, N));
+      for (var i = 0; i < 3; i++)
+        c[i] *= dotLN*body.diffuse[i];
+    }
   };
 }();

@@ -58,12 +58,14 @@ var GEO = function() {
       return closest;
     },
     randomDir: function(n) {
-      var phi = Math.PI*Math.random();
+      // http://mathworld.wolfram.com/SpherePointPicking.html
+      var cosPhi = 2*Math.random() - 1;
+      var sinPhi = Math.sqrt(1 - cosPhi*cosPhi);
       var thi = 2*Math.PI*Math.random();
       var v = new Vector(
-        Math.sin(phi)*Math.cos(thi),
-        Math.cos(phi),
-        Math.sin(phi)*Math.sin(thi)
+        sinPhi*Math.cos(thi),
+        cosPhi,
+        sinPhi*Math.sin(thi)
       );
       if (Vector.dot(n, v) < 0) {
         v.x = -v.x;

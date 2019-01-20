@@ -1,14 +1,16 @@
 var RES = function() {
+  var a = 0.0, d = 1.0;
+      // "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [0,0,0], "n":17},
   var box = [
     {
-      "material": {"ambient": [0.1,0,0], "diffuse": [0.9,0,0], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [a,0,0], "diffuse": [d,0,0], "specular": [0,0,0], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0],[0,0,1],[0,1,1],[1,1,1],[1,0,1]],
       "triangles": [
         [0,4,7],[7,3,0],
       ]
     },
     {
-      "material": {"ambient": [0,0,0.1], "diffuse": [0,0,0.9], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,0], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0],[0,0,1],[0,1,1],[1,1,1],[1,0,1]],
       "triangles": [
         [4,5,6],[6,7,4],
@@ -16,19 +18,19 @@ var RES = function() {
       ]
     },
     {
-      "material": {"ambient": [0,0,0.1], "diffuse": [0,0,0.9], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,0], "n":17},
       "vertices": [[0,0,0],[0,1,0],[0,0,1],[0,1,1]],
       "triangles": [[0,1,3],[3,2,0]]
     },
     {
-      "material": {"ambient": [0,0,0.1], "diffuse": [0,0,0.9], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,0], "n":17},
       "vertices": [[1,1,0],[1,0,0],[1,1,1],[1,0,1]],
       "triangles": [[0,1,3],[3,2,0]]
     },
   ];
 
   var lid = {
-      "material": {"ambient": [0,0,0.1], "diffuse": [0,0,0.9], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,0], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0]],
       "triangles": [[3,0,1],[1,2,3]]
     };
@@ -89,7 +91,7 @@ var RES = function() {
     // inputLights: getJSONFile(CONST.INPUT_LIGHTS_URL,"lights").map(PointLight),
     inputLights: [
       // {"x": 0.5, "y": 0.5, "z": -0.5, "ambient": [0,1,0], "diffuse": [0,1,0], "specular": [0,1,0]},
-      {"x": 0.5, "y": 1, "z": 0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]},
+      {"x": 0.5, "y": 1.0, "z": 0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]},
       // {"x": 2, "y": 4, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
     ].map(PointLight),
     getJSONFile: getJSONFile,
