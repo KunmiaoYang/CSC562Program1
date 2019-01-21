@@ -46,7 +46,7 @@ var GEO = function() {
       for (var e=0, n = bodies.length, isect = {}; e<n; e++) {
         if (e == from) continue;
         isect = bodies[e].rayIntersect(ray, clipVal);
-        if (isect.exists && // there is an intersect
+        if (isect.exists && isect.t > 0 &&// there is an intersect
             isect.t < closest.t) { // it is the closest yet
           closest.t = isect.t; // record closest t yet
           closest.exists = true;
@@ -73,6 +73,19 @@ var GEO = function() {
         v.z = -v.z;
       }
       return v;
+    },
+    // N and V should be normalized first, check it before function call
+    refracVec: function(N, V, refracIndex) {
+      var cos1 = Vector.dot(N, V);
+      if (1 === refracIndex || 1 === cos1 || 0 === cos1) return Vector.scale(-1, V);
+
+      var sin2 = Math.sqrt(1 - Math.pow(cos1,2))/refracIndex;
+      var cos2 = Math.sqrt(1 - Math.pow(sin2,2));
+      return new Vector(
+        N.x*(cos1/refracIndex-cos2)-V.x/refracIndex,
+        N.y*(cos1/refracIndex-cos2)-V.y/refracIndex,
+        N.z*(cos1/refracIndex-cos2)-V.z/refracIndex
+      );
     },
   };
 }();

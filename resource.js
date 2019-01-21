@@ -1,18 +1,18 @@
 var RES = function() {
-  var a = 0.4, d = 0.6;
-      // "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [0,0,0], "n":17},
-      // "material": {"ambient": [a,0,0], "diffuse": [d,0,0], "specular": [0,0,0], "n":17},
-      // "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,0], "n":17},
+  var a = 0.4, d = 0.4, s = 0.2;
+      // "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [s,s,s], "n":17},
+      // "material": {"ambient": [a,0,0], "diffuse": [d,0,0], "specular": [s,0,0], "n":17},
+      // "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,s], "n":17},
   var box = [
     {
-      "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [s,s,s], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0],[0,0,1],[0,1,1],[1,1,1],[1,0,1]],
       "triangles": [
         [0,4,7],[7,3,0],
       ]
     },
     {
-      "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [s,s,s], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0],[0,0,1],[0,1,1],[1,1,1],[1,0,1]],
       "triangles": [
         [4,5,6],[6,7,4],
@@ -20,19 +20,19 @@ var RES = function() {
       ]
     },
     {
-      "material": {"ambient": [a,0,0], "diffuse": [d,0,0], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [a,0,0], "diffuse": [d,0,0], "specular": [s,0,0], "n":17},
       "vertices": [[0,0,0],[0,1,0],[0,0,1],[0,1,1]],
       "triangles": [[0,1,3],[3,2,0]]
     },
     {
-      "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,s], "n":17},
       "vertices": [[1,1,0],[1,0,0],[1,1,1],[1,0,1]],
       "triangles": [[0,1,3],[3,2,0]]
     },
   ];
 
   var lid = {
-      "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [0,0,0], "n":17},
+      "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [s,s,s], "n":17},
       "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0]],
       "triangles": [[3,0,1],[1,2,3]]
     };
@@ -97,15 +97,25 @@ var RES = function() {
       // {"x": 2, "y": 4, "z": -0.5, "ambient": [1,1,1], "diffuse": [1,1,1], "specular": [1,1,1]}
     ].map(PointLight),
     getJSONFile: getJSONFile,
-    loadBodies: function(bodies, bounceBodies) {
-      // parseEllipsoids(bodies);
-      parseSpheres(bodies);
-      for (var i = 0; i < box.length; i++)
-        parseTriangles(box[i], bodies);
+    loadBodies: function() {
+      RES.bodies = [];
+      RES.bounceBodies = [];
 
-      for (var i = 0; i < bodies.length; i++)
-        bounceBodies.push(bodies[i]);
-      parseTriangles(lid, bounceBodies);
+      // parseEllipsoids(bodies);
+      parseSpheres(RES.bodies);
+      for (var i = 0; i < box.length; i++)
+        parseTriangles(box[i], RES.bodies);
+
+      RES.bodies[0].alpha = 0;
+      RES.bodies[0].RI = 1.6;
+      RES.bodies[0].r = 0.2;
+      RES.bodies[0].x = 0.2;
+      RES.bodies[0].y = 0.7;
+      RES.bodies[0].z = 0.2;
+
+      for (var i = 0; i < RES.bodies.length; i++)
+        RES.bounceBodies.push(RES.bodies[i]);
+      parseTriangles(lid, RES.bounceBodies);
 
       // parseTriangles(lid, bodies);
     },

@@ -95,7 +95,7 @@ var VIEW = function() {
         c.change(0,0,0,255); // set pixel to background color
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
-        if (closest.exists) shader(closest,closest.id,RES.inputLights,RES.bodies,c);
+        if (closest.exists) shader(CONST.Eye, closest,closest.id,RES.inputLights,RES.bodies,c);
         if (!VIEW.colorMap[x]) VIEW.colorMap[x] = [];
         VIEW.colorMap[x][y] = c.clamp(1).copy();
         drawPixel(imagedata,x,y,c.scale3(255));
@@ -111,9 +111,9 @@ var VIEW = function() {
           var L = GEO.randomDir(N);
           var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,RES.bounceBodies);
           if (isect.exists) {
-            shader(isect,isect.id,RES.inputLights,RES.bounceBodies,c);
-            SHADER.Lambertian(N, L, RES.bodies[closest.id], c);
-          } else console.log("missing",isect);
+            shader(closest.xyz,isect,isect.id,RES.inputLights,RES.bounceBodies,c);
+            SHADER.BlinnPhong(N, L, CONST.Eye, closest, RES.bodies[closest.id], c);
+          }
         }
         addColor(imagedata,x,y,VIEW.colorMap,c.scale3(8/sample));
       };

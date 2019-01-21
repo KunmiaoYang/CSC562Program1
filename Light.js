@@ -21,7 +21,5 @@ var Light = function(light) {
     }
   }
 
-  // light.BRDF = light.addDiffuse;
-
   return light;
 }

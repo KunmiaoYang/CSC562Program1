@@ -26,10 +26,13 @@ class Vector {
         }
     }
 
+    length() {
+      return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
+    }
+
     toConsole(prefix) {
         console.log(prefix+"["+this.x+","+this.y+","+this.z+"]");
     } // end to console
-
 
     // static dot method
     static dot(v1,v2) {
@@ -151,19 +154,13 @@ class Vector {
 
     // static normalize method
     static normalize(v) {
-        try {
-            if (!(v instanceof Vector))
-                throw "Vector.normalize: parameter not a vector";
-            else {
-                var lenDenom = 1/Math.sqrt(Vector.dot(v,v));
-                return(Vector.scale(lenDenom,v));
-            }
-        } // end try
+      if (!(v instanceof Vector))
+          throw "Vector.normalize: parameter not a vector";
+      else {
+          var lenDenom = 1/Math.sqrt(Vector.dot(v,v));
+          return(Vector.scale(lenDenom,v));
+      }
 
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
     } // end scale static method
 
 } // end Vector class

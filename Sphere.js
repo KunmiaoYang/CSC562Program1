@@ -1,7 +1,7 @@
 var Sphere = function(body) {
   // Default material
   body.alpha = 1; // alpha compositing for transparent
-  body.RI = 1;  // Refrective index
+  body.RI = 1;  // Refractive index
 
   // calculate t, given start point, end point and Ellipsoid
   var calcT = function(pStart, direction) {
@@ -35,6 +35,29 @@ var Sphere = function(body) {
       isect.xyz.y - body.y,
       isect.xyz.z - body.z
     )); // surface normal
+  };
+
+  // Constraint: isect should be a point on sphere
+  body.refracVec = function(N, V, isect) {
+    var LIn = GEO.refracVec(N, V, body.RI);
+    var R = new Vector(
+      body.x - isect.xyz.x,
+      body.y - isect.xyz.y,
+      body.z - isect.xyz.z
+    );
+    var t = 2*Vector.dot(R, LIn);
+    var oIsect = {
+      exists: true,
+      t: t,
+      xyz: Vector.add(isect.xyz, Vector.scale(t, LIn))
+    };
+    var oN = Vector.normalize(new Vector(
+      body.x - oIsect.xyz.x,
+      body.y - oIsect.xyz.y,
+      body.z - oIsect.xyz.z
+    ));
+    oIsect.L = GEO.refracVec(oN, Vector.scale(-1, LIn), 1/body.RI);
+    return oIsect;
   };
 
   return body;

@@ -25,6 +25,7 @@ var Triangle = function(p1, p2, p3, material) {
     ambient: material.ambient,
     diffuse: material.diffuse,
     specular: material.specular,
+    alpha: 1,
     n: 1,
     normVec: normVec,
     rayIntersect: function(ray, clipVal) {
@@ -36,6 +37,10 @@ var Triangle = function(p1, p2, p3, material) {
     },
     calcNormVec: function(point) {
       return normVec;
-    }
+    },
+    refracVec: function(N, V, isect) {
+      isect.L = Vector.scale(-1, V);
+      return isect;
+    },
   }
 }

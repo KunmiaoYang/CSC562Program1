@@ -321,7 +321,7 @@ var pathTracing = function() {
 /* main -- here is where execution begins after window load */
 function main() {
   // Load resource
-  RES.loadBodies(RES.bodies, RES.bounceBodies);
+  RES.loadBodies();
 
   // Get the canvas and context
   VIEW.canvas = document.getElementById("viewport");
@@ -337,8 +337,8 @@ function main() {
   //drawInputSpheresUsingArcs(context);
     // shows how to read input file, but not how to draw pixels
 
-  // rayTracing();
-  pathTracing();
+  rayTracing();
+  // pathTracing();
 
   //framelessRayCastSpheres(context);
 }

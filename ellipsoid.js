@@ -1,7 +1,7 @@
 var Ellipsoid = function(body) {
   // Default material
   body.alpha = 1; // alpha compositing for transparent
-  body.RI = 1;  // Refrective index
+  body.RI = 1;  // Refractive index
 
   // calculate t, given start point, end point and Ellipsoid
   var calcT = function(pStart, direction) {
