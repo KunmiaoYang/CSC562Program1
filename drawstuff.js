@@ -315,7 +315,7 @@ var pathTracing = function() {
     VIEW.rayTracing(new Color(0,0,0,0), SHADER.pathTracing));
   // Indirect ray
   VIEW.context.putImageData(VIEW.imagedata, 0, 0);
-  addBRDF(VIEW.context, SHADER.pathTracing, CONST.SAMPLE_COUNT);
+  addBRDF(VIEW.context, SHADER.roulette(SHADER.pathTracing), CONST.SAMPLE_COUNT);
 };
 
 /* main -- here is where execution begins after window load */
@@ -337,7 +337,8 @@ function main() {
   //drawInputSpheresUsingArcs(context);
     // shows how to read input file, but not how to draw pixels
 
-  rayTracing();
+  // rayTracing();
+  pathTracing();
 
   //framelessRayCastSpheres(context);
 }

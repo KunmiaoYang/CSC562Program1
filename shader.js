@@ -91,6 +91,26 @@ var SHADER = function() {
       var dotLN = Math.max(0, Vector.dot(L, N));
       for (var i = 0; i < 3; i++)
         c[i] *= dotLN*body.diffuse[i];
-    }
+    },
+
+    roulette: function(shader) {
+      var recur = function(closest, id, lights, bodies, c) {
+        if (!closest.exists) return;
+
+        var rand = Math.random();
+        if (rand < CONST.ROULETTE_RATE) { // Stop
+          var N = bodies[closest.id].calcNormVec(closest); // surface normal
+          var L = GEO.randomDir(N);
+          var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,bodies);
+          recur(isect, isect.id, lights, bodies, c);
+          SHADER.Lambertian(N, L, bodies[closest.id], c);
+        } else {
+          x = 0;
+        }
+
+        shader(closest,closest.id,lights,bodies,c);
+      };
+      return recur;
+    },
   };
 }();

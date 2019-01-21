@@ -106,27 +106,17 @@ var VIEW = function() {
         c.change(0,0,0,255); // set pixel to background color
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
-        // TODO: use diffusion instead
         if (closest.exists) {
           var N = RES.bodies[closest.id].calcNormVec(closest); // surface normal
-          var V = GEO.randomDir(N);
-          var isect = GEO.closestIntersect([closest.xyz, V],0,closest.id,RES.bounceBodies);
+          var L = GEO.randomDir(N);
+          var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,RES.bounceBodies);
           if (isect.exists) {
             shader(isect,isect.id,RES.inputLights,RES.bounceBodies,c);
-            SHADER.Lambertian(N, V, RES.bodies[closest.id], c);
+            SHADER.Lambertian(N, L, RES.bodies[closest.id], c);
           } else console.log("missing",isect);
         }
-        addColor(imagedata,x,y,VIEW.colorMap,c.scale3(1/sample));
-        // addColor(imagedata,x,y,c.scale3(2/sample));
+        addColor(imagedata,x,y,VIEW.colorMap,c.scale3(8/sample));
       };
-    },
-    roulette: function(c, shader) {
-        var rand = Math.random();
-        if (rand > CONST.ROULETTE_RATE) { // Stop
-
-        } else { // Continue bounce
-
-        }
     },
   };
 }();
