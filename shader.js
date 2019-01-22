@@ -129,13 +129,15 @@ var SHADER = function() {
             var refIsect = bodies[id].refracVec(N, V, closest);
             closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, id, bodies);
           }
-          var L = GEO.randomDir(N);
-          var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,bodies);
-          recur(closest.xyz, isect, isect.id, lights, bodies, c);
-          SHADER.BlinnPhong(N, L, eye, closest, bodies[closest.id], c);
+          if (closest.exists && !bodies[closest.id].isLight) {
+            var L = GEO.randomDir(N);
+            var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,bodies);
+            recur(closest.xyz, isect, isect.id, lights, bodies, c);
+            SHADER.BlinnPhong(N, L, eye, closest, bodies[closest.id], c);
+          }
         }
 
-        shader(eye, closest,closest.id,lights,bodies,c);
+        if (closest.exists) shader(eye, closest,closest.id,lights,bodies,c);
       };
       return recur;
     },
