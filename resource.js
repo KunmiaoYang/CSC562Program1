@@ -37,6 +37,11 @@ var RES = function() {
       "triangles": [[3,0,1],[1,2,3]]
     };
 
+  var marble = {
+    "ambient": [0.1,0.0,0.0], "diffuse": [0.6,0.0,0.0], "specular": [0.3,0.3,0.3], "n": 3,
+    "x": 0.25, "y": 0.1, "z": 0.3, "r":0.1, "alpha": 0,
+  }
+
   // get the JSON file from the passed URL
   var getJSONFile = function(url,descr) {
       try {
@@ -99,6 +104,7 @@ var RES = function() {
     getJSONFile: getJSONFile,
     loadBodies: function() {
       RES.bodies = [];
+      RES.bodies[0] = Sphere(marble);
       RES.bounceBodies = [];
 
       // parseEllipsoids(bodies);
@@ -108,10 +114,6 @@ var RES = function() {
 
       RES.bodies[0].alpha = 0;
       RES.bodies[0].RI = 1.6;
-      RES.bodies[0].r = 0.2;
-      RES.bodies[0].x = 0.2;
-      RES.bodies[0].y = 0.7;
-      RES.bodies[0].z = 0.2;
 
       for (var i = 0; i < RES.bodies.length; i++)
         RES.bounceBodies.push(RES.bodies[i]);

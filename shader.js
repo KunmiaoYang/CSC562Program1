@@ -120,6 +120,11 @@ var SHADER = function() {
         var rand = Math.random();
         if (rand < CONST.ROULETTE_RATE) { // Stop
           var N = bodies[closest.id].calcNormVec(closest); // surface normal
+          if (CONST.REFRACTION && bodies[id].alpha < 1) {
+            var V = Vector.normalize(Vector.subtract(eye,closest.xyz)); // view vector
+            var refIsect = bodies[id].refracVec(N, V, closest);
+            closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, id, bodies);
+          }
           var L = GEO.randomDir(N);
           var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,bodies);
           recur(closest.xyz, isect, isect.id, lights, bodies, c);
