@@ -296,27 +296,26 @@ var rayTracing = function() {
 };
 
 var addBRDF = function(context, shader, sample) {
-  var i = 0;
+  var i = 1;
   var inter;
   var addSample = function() {
     VIEW.eachPixel(VIEW.imagedata, RES.bodies,
-                   VIEW.pathTracing(new Color(0,0,0,0), shader, sample));
+                   VIEW.pathTracing(new Color(0,0,0,0), shader, ++VIEW.sample));
     VIEW.context.putImageData(VIEW.imagedata, 0, 0);
-    console.log("Sample: ", i);
-    if (++i >= sample) clearInterval(inter);
+    console.log("Sample: ", VIEW.sample);
+    if (++i > sample) clearInterval(inter);
   };
   inter = setInterval(addSample, 100);
 };
 
+var addSample = function(sample) {
+  addBRDF(VIEW.context, SHADER.getShader(CONST.PATH_TRACING_SHADER), sample);
+}
 var pathTracing = function() {
   VIEW.init(VIEW.context);
   VIEW.eachPixel(VIEW.imagedata, RES.bodies, VIEW.initColorMap);
-  // Direct ray
-  // VIEW.eachPixel(VIEW.imagedata, RES.bodies,
-  //   VIEW.rayTracing(new Color(0,0,0,0), SHADER.pathTracing));
-  // Indirect ray
-  VIEW.context.putImageData(VIEW.imagedata, 0, 0);
-  addBRDF(VIEW.context, SHADER.roulette(SHADER.pathTracing), CONST.SAMPLE_COUNT);
+  VIEW.sample = 0;
+  addSample(CONST.SAMPLE_COUNT);
 };
 
 /* main -- here is where execution begins after window load */
@@ -336,16 +335,39 @@ function main() {
   //framelessRayCastSpheres(context);
 }
 
+function rayTracing() {
+  // Load resource
+  RES.loadBodies();
+  RES.loadLights();
+  // RES.loadAreaLights();
+
+  // Get the canvas and context
+  VIEW.canvas = document.getElementById("viewport");
+  VIEW.context = VIEW.canvas.getContext("2d");
+
+  rayTracing();
+}
+
+function pointLight() {
+  // Load resource
+  RES.loadBodies();
+  RES.loadLights();
+
+  // Get the canvas and context
+  VIEW.canvas = document.getElementById("viewport");
+  VIEW.context = VIEW.canvas.getContext("2d");
+
+  pathTracing();
+}
+
 function areaLight() {
   // Load resource
   RES.loadBodies();
-  // RES.loadLights();
   RES.loadAreaLights();
 
   // Get the canvas and context
   VIEW.canvas = document.getElementById("viewport");
   VIEW.context = VIEW.canvas.getContext("2d");
 
-  // rayTracing();
   pathTracing();
 }

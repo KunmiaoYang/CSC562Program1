@@ -137,5 +137,14 @@ var SHADER = function() {
       };
       return recur;
     },
+
+    getShader: function(shaderIndex) {
+      switch (shaderIndex) {
+        case CONST.SHADER_TYPES.RAY_TRACING: return SHADER.rayTracing;
+        case CONST.SHADER_TYPES.PATH_TRACING: return SHADER.pathTracing;
+        case CONST.SHADER_TYPES.ROULETTE: return SHADER.roulette(SHADER.pathTracing);
+        default: return SHADER.pathTracing;
+      }
+    }
   };
 }();

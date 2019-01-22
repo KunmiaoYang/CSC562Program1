@@ -9,6 +9,11 @@ var CONST = function() {
     DIFFUSE: 2,
     SPECULAR: 4,
   };
+  var SHADER_TYPES = {
+    RAY_TRACING: 0,
+    PATH_TRACING: 1,
+    ROULETTE: 2,
+  };
   return {
     WIN_Z: 0,
     WIN_LEFT: 0, WIN_RIGHT: 1,
@@ -26,6 +31,8 @@ var CONST = function() {
     Eye: new Vector(0.5,0.5,-0.5), // set the eye position
     BRDF_TYPES: BRDF_TYPES,
     BRDFType: BRDF_TYPES.DIFFUSE | BRDF_TYPES.SPECULAR,
+    SHADER_TYPES: SHADER_TYPES,
+    PATH_TRACING_SHADER: SHADER_TYPES.ROULETTE,
     SAMPLE_COUNT: 5,
     ROULETTE_RATE: 0.5,
     REFRACTION: true,

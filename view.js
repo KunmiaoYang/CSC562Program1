@@ -15,7 +15,7 @@ var VIEW = function() {
         throw "drawpixel color is not a Color";
   }; // end drawPixel
 
-  var addColor = function(imagedata,x,y,colorMap,color) {
+  var addColor = function(imagedata,x,y,colorMap,color,sample) {
     if ((typeof(x) !== "number") || (typeof(y) !== "number"))
         throw "pixel location not a number";
     else if ((x<0) || (y<0) || (x>=imagedata.width) || (y>=imagedata.height))
@@ -23,14 +23,15 @@ var VIEW = function() {
     else if (color instanceof Color) {
       var pixelindex = (y*imagedata.width + x) * 4;
       for (var i = 0; i < 3; i++) {
-        colorMap[x][y][i] = Math.min(1, colorMap[x][y][i] + color[i]);
-        imagedata.data[pixelindex + i] = colorMap[x][y][i] * 255;
+        colorMap[x][y][i] += color[i];
+        imagedata.data[pixelindex + i] = Math.min(255, colorMap[x][y][i]*255/sample);
       }
     } else
         throw "drawpixel color is not a Color";
   };
 
   return {
+    sample: 0,
     canvas: {},
     context: {},
     imagedata: {},
@@ -122,7 +123,7 @@ var VIEW = function() {
             shader(CONST.Eye,closest,closest.id,RES.inputLights,RES.bodies,c.scale3(8));
           }
         }
-        addColor(imagedata,x,y,VIEW.colorMap,c.scale3(1/sample));
+        addColor(imagedata,x,y,VIEW.colorMap,c,sample);
       };
     },
     initColorMap: function(imagedata,x,y,wx,wy) {
