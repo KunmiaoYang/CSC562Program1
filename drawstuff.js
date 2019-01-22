@@ -289,6 +289,26 @@ function framelessRayCastSpheres(context) {
 } // end frameless ray cast spheres
 
 var rayTracing = function() {
+  // Load resource
+  RES.loadBodies();
+  switch (CONST.LIGHTS) {
+    case CONST.LIGHTS_MODEL.URL:
+      RES.loadLights(RES.getJSONFile(CONST.INPUT_LIGHTS_URL,"lights"));
+      break;
+    case CONST.LIGHTS_MODEL.SINGLE_POINT:
+      RES.loadSingleLight();
+      break;
+    case CONST.LIGHTS_MODEL.DUAL_POINT:
+      RES.loadLights();
+      break;
+    default:
+      RES.loadSingleLight();
+  }
+
+  // Get the canvas and context
+  VIEW.canvas = document.getElementById("viewport");
+  VIEW.context = VIEW.canvas.getContext("2d");
+
   VIEW.init(VIEW.context);
   VIEW.eachPixel(VIEW.imagedata, RES.bodies,
     VIEW.rayTracing(new Color(0,0,0,0), SHADER.rayTracing));
@@ -310,8 +330,32 @@ var addBRDF = function(context, shader, sample) {
 
 var addSample = function(sample) {
   addBRDF(VIEW.context, SHADER.getShader(CONST.PATH_TRACING_SHADER), sample);
-}
+};
+
 var pathTracing = function() {
+  // Load resource
+  RES.loadBodies();
+  switch (CONST.LIGHTS) {
+    case CONST.LIGHTS_MODEL.URL:
+      RES.loadLights(RES.getJSONFile(CONST.INPUT_LIGHTS_URL,"lights"));
+      break;
+    case CONST.LIGHTS_MODEL.SINGLE_POINT:
+      RES.loadSingleLight();
+      break;
+    case CONST.LIGHTS_MODEL.DUAL_POINT:
+      RES.loadLights();
+      break;
+    case CONST.LIGHTS_MODEL.AREA:
+      RES.loadAreaLights();
+      break;
+    default:
+      RES.loadSingleLight();
+  }
+
+  // Get the canvas and context
+  VIEW.canvas = document.getElementById("viewport");
+  VIEW.context = VIEW.canvas.getContext("2d");
+
   VIEW.init(VIEW.context);
   VIEW.eachPixel(VIEW.imagedata, RES.bodies, VIEW.initColorMap);
   VIEW.sample = 0;
@@ -320,54 +364,5 @@ var pathTracing = function() {
 
 /* main -- here is where execution begins after window load */
 function main() {
-  // Load resource
-  RES.loadBodies();
-  RES.loadLights();
-  // RES.loadAreaLights();
-
-  // Get the canvas and context
-  VIEW.canvas = document.getElementById("viewport");
-  VIEW.context = VIEW.canvas.getContext("2d");
-
   rayTracing();
-  // pathTracing();
-
-  //framelessRayCastSpheres(context);
-}
-
-function rayTracing() {
-  // Load resource
-  RES.loadBodies();
-  RES.loadLights();
-  // RES.loadAreaLights();
-
-  // Get the canvas and context
-  VIEW.canvas = document.getElementById("viewport");
-  VIEW.context = VIEW.canvas.getContext("2d");
-
-  rayTracing();
-}
-
-function pointLight() {
-  // Load resource
-  RES.loadBodies();
-  RES.loadLights();
-
-  // Get the canvas and context
-  VIEW.canvas = document.getElementById("viewport");
-  VIEW.context = VIEW.canvas.getContext("2d");
-
-  pathTracing();
-}
-
-function areaLight() {
-  // Load resource
-  RES.loadBodies();
-  RES.loadAreaLights();
-
-  // Get the canvas and context
-  VIEW.canvas = document.getElementById("viewport");
-  VIEW.context = VIEW.canvas.getContext("2d");
-
-  pathTracing();
 }

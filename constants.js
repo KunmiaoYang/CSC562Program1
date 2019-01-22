@@ -14,6 +14,12 @@ var CONST = function() {
     PATH_TRACING: 1,
     ROULETTE: 2,
   };
+  var LIGHTS_MODEL = {
+    URL: 0,
+    SINGLE_POINT: 1,
+    DUAL_POINT: 2,
+    AREA: 3,
+  };
   return {
     WIN_Z: 0,
     WIN_LEFT: 0, WIN_RIGHT: 1,
@@ -33,8 +39,10 @@ var CONST = function() {
     BRDFType: BRDF_TYPES.DIFFUSE | BRDF_TYPES.SPECULAR,
     SHADER_TYPES: SHADER_TYPES,
     PATH_TRACING_SHADER: SHADER_TYPES.ROULETTE,
+    LIGHTS_MODEL: LIGHTS_MODEL,
+    LIGHTS: LIGHTS_MODEL.AREA,
     SAMPLE_COUNT: 5,
     ROULETTE_RATE: 0.5,
-    REFRACTION: true,
+    REFRACTION: false,
   };
 }();

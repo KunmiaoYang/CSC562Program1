@@ -46,6 +46,7 @@ var SHADER = function() {
                   lights[l].addSpecular(N, L, V, body, c);
               } // end if light not occluded
           } // end for lights
+          c.scale3(1/lights.length);
 
           return;
       } else {
@@ -86,6 +87,7 @@ var SHADER = function() {
             }
           } // end if light not occluded
         } // end for lights
+        c.scale3(1/lights.length);
         // if (isectId > 14) console.log("lid color", c);
       } else {
         var N = bodies[isectId].calcNormVec(isect); // surface normal
