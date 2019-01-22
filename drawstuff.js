@@ -310,9 +310,10 @@ var addBRDF = function(context, shader, sample) {
 
 var pathTracing = function() {
   VIEW.init(VIEW.context);
+  VIEW.eachPixel(VIEW.imagedata, RES.bodies, VIEW.initColorMap);
   // Direct ray
-  VIEW.eachPixel(VIEW.imagedata, RES.bodies,
-    VIEW.rayTracing(new Color(0,0,0,0), SHADER.pathTracing));
+  // VIEW.eachPixel(VIEW.imagedata, RES.bodies,
+  //   VIEW.rayTracing(new Color(0,0,0,0), SHADER.pathTracing));
   // Indirect ray
   VIEW.context.putImageData(VIEW.imagedata, 0, 0);
   addBRDF(VIEW.context, SHADER.roulette(SHADER.pathTracing), CONST.SAMPLE_COUNT);
@@ -322,23 +323,29 @@ var pathTracing = function() {
 function main() {
   // Load resource
   RES.loadBodies();
+  RES.loadLights();
+  // RES.loadAreaLights();
 
   // Get the canvas and context
   VIEW.canvas = document.getElementById("viewport");
   VIEW.context = VIEW.canvas.getContext("2d");
 
-  // Create the image
-  //VIEW.drawRandPixels(context);
-    // shows how to draw pixels
-
-  //drawRandPixelsInInputSpheres(context);
-    // shows how to draw pixels and read input file
-
-  //drawInputSpheresUsingArcs(context);
-    // shows how to read input file, but not how to draw pixels
-
   rayTracing();
   // pathTracing();
 
   //framelessRayCastSpheres(context);
+}
+
+function areaLight() {
+  // Load resource
+  RES.loadBodies();
+  // RES.loadLights();
+  RES.loadAreaLights();
+
+  // Get the canvas and context
+  VIEW.canvas = document.getElementById("viewport");
+  VIEW.context = VIEW.canvas.getContext("2d");
+
+  // rayTracing();
+  pathTracing();
 }

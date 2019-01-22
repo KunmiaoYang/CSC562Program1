@@ -4,7 +4,7 @@ var PointLight = function(light) {
 
   light.getLoc = function(Lloc) {
     Lloc.set(light.x,light.y,light.z);
-  }
+  };
 
   return light;
-}
+};

@@ -107,16 +107,28 @@ var VIEW = function() {
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
         if (closest.exists) {
-          var N = RES.bodies[closest.id].calcNormVec(closest); // surface normal
-          var L = GEO.randomDir(N);
-          var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,RES.bounceBodies);
-          if (isect.exists) {
-            shader(closest.xyz,isect,isect.id,RES.inputLights,RES.bounceBodies,c);
-            SHADER.BlinnPhong(N, L, CONST.Eye, closest, RES.bodies[closest.id], c);
+          if (RES.bodies[closest.id].isLight) {
+            RES.bodies[closest.id].getColor(c);
+          } else {
+            // Indirect ray
+            var N = RES.bodies[closest.id].calcNormVec(closest); // surface normal
+            var L = GEO.randomDir(N);
+            var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,RES.bounceBodies);
+            if (isect.exists) {
+              shader(closest.xyz,isect,isect.id,RES.inputLights,RES.bounceBodies,c);
+              SHADER.BlinnPhong(N, L, CONST.Eye, closest, RES.bodies[closest.id], c);
+            }
+            // Direct ray
+            shader(CONST.Eye,closest,closest.id,RES.inputLights,RES.bodies,c.scale3(8));
           }
         }
-        addColor(imagedata,x,y,VIEW.colorMap,c.scale3(8/sample));
+        addColor(imagedata,x,y,VIEW.colorMap,c.scale3(1/sample));
       };
+    },
+    initColorMap: function(imagedata,x,y,wx,wy) {
+      if (!VIEW.colorMap[x]) VIEW.colorMap[x] = [];
+      VIEW.colorMap[x][y] = new Color(0, 0, 0, 255);
+      drawPixel(imagedata,x,y,VIEW.colorMap[x][y]);
     },
   };
 }();

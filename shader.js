@@ -63,7 +63,9 @@ var SHADER = function() {
       if (   !(isect instanceof Object) || !(typeof(isectId) === "number")
           || !(lights instanceof Array) || !(bodies instanceof Array))
           throw "shadeIsect: bad parameter passed";
-      else if (!CONST.REFRACTION || bodies[isectId].alpha === 1) {
+      else if (bodies[isectId].isLight) {
+        bodies[isectId].getColor(c);
+      } else if (!CONST.REFRACTION || bodies[isectId].alpha === 1) {
         // add light for each source
         var Lloc = new Vector(0,0,0);
         for (var l=0; l<lights.length; l++) {
@@ -118,7 +120,7 @@ var SHADER = function() {
         if (!closest.exists) return;
 
         var rand = Math.random();
-        if (rand < CONST.ROULETTE_RATE) { // Stop
+        if (!bodies[id].isLight && rand < CONST.ROULETTE_RATE) { // Stop
           var N = bodies[closest.id].calcNormVec(closest); // surface normal
           if (CONST.REFRACTION && bodies[id].alpha < 1) {
             var V = Vector.normalize(Vector.subtract(eye,closest.xyz)); // view vector
@@ -129,8 +131,6 @@ var SHADER = function() {
           var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,bodies);
           recur(closest.xyz, isect, isect.id, lights, bodies, c);
           SHADER.BlinnPhong(N, L, eye, closest, bodies[closest.id], c);
-        } else {
-          x = 0;
         }
 
         shader(eye, closest,closest.id,lights,bodies,c);

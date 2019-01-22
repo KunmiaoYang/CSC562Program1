@@ -47,7 +47,7 @@ var GEO = function() {
         if (e == from) continue;
         isect = bodies[e].rayIntersect(ray, clipVal);
         if (isect.exists && isect.t > 0 &&// there is an intersect
-            isect.t < closest.t) { // it is the closest yet
+            isect.t <= closest.t) { // it is the closest yet
           closest.t = isect.t; // record closest t yet
           closest.exists = true;
           closest.xyz = isect.xyz;
