@@ -43,6 +43,6 @@ var CONST = function() {
     LIGHTS: LIGHTS_MODEL.AREA,
     SAMPLE_COUNT: 5,
     ROULETTE_RATE: 0.5,
-    REFRACTION: false,
+    TRANSPARENT: true,
   };
 }();

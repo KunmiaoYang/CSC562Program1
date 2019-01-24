@@ -34,12 +34,12 @@ var RES = function() {
   var lid = {
     "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [s,s,s], "n":17},
     "vertices": [[0,0,0],[0,1,0],[1,1,0],[1,0,0]],
-    "triangles": [[3,0,1],[1,2,3]]
+    "triangles": [[1,0,3],[3,2,1]]
   };
 
   var marble = {
     "ambient": [0.1,0.0,0.0], "diffuse": [0.6,0.0,0.0], "specular": [0.3,0.3,0.3], "n": 3,
-    "x": 0.25, "y": 0.1, "z": 0.3, "r":0.1, "alpha": 0,
+    "x": 0.4, "y": 0.2, "z": 0.3, "r":0.2, "alpha": 0,
   };
 
   var pointLights = [
@@ -49,7 +49,7 @@ var RES = function() {
   ];
 
   var ceilingSquareLights = [
-    {xLim: [0.4, 0.6], zLim: [0.4, 0.6], y: 1.0, ambient: [1,1,1], diffuse: [1,1,1], specular: [1,1,1]},
+    {xLim: [0.35, 0.65], zLim: [0.35, 0.65], y: 1.0, ambient: [1,1,1], diffuse: [1,1,1], specular: [1,1,1]},
   ];
 
   // get the JSON file from the passed URL
@@ -109,11 +109,6 @@ var RES = function() {
     getJSONFile: getJSONFile,
     loadBodies: function() {
       RES.bodies = [];
-      if (CONST.REFRACTION) {
-        RES.bodies[0] = Sphere(marble);
-        RES.bodies[0].alpha = 0;
-        RES.bodies[0].RI = 1.6;
-      }
       RES.bounceBodies = [];
 
       // parseEllipsoids(bodies);
@@ -121,6 +116,12 @@ var RES = function() {
       for (var i = 0; i < box.length; i++)
         parseTriangles(box[i], RES.bodies);
 
+      if (CONST.TRANSPARENT) {
+        RES.bodies[0] = Sphere(marble);
+        RES.bodies[0].alpha = 0;
+        RES.bodies[0].RI = 1.4;
+        RES.bodies[0].Trans = 4*RES.bodies[0].RI/Math.pow(RES.bodies[0].RI + 1, 2);
+      }
 
       for (var i = 0; i < RES.bodies.length; i++)
         RES.bounceBodies.push(RES.bodies[i]);

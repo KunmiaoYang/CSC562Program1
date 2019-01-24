@@ -75,6 +75,15 @@ var GEO = function() {
       return v;
     },
     // N and V should be normalized first, check it before function call
+    reflecVec: function(N, V) {
+      var cos = Vector.dot(N, V);
+      return new Vector(
+         2*cos*N.x - V.x,
+         2*cos*N.y - V.y,
+         2*cos*N.z - V.z
+      );
+    },
+    // N and V should be normalized first, check it before function call
     refracVec: function(N, V, refracIndex) {
       var cos1 = Vector.dot(N, V);
       if (1 === refracIndex || 1 === cos1 || 0 === cos1) return Vector.scale(-1, V);

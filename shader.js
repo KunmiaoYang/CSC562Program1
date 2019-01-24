@@ -11,7 +11,7 @@ var SHADER = function() {
           var b = bodies[isectId].diffuse[2];
           c.change(255*r,255*g,255*b,255);
           return;
-      } else if (!CONST.REFRACTION || bodies[isectId].alpha === 1) { // if not just rendering intersects
+      } else if (!CONST.TRANSPARENT || bodies[isectId].alpha === 1) { // if not just rendering intersects
           var body = bodies[isectId]; // ellipsoid intersected by eye
           // console.log("shading pixel");
 
@@ -52,11 +52,11 @@ var SHADER = function() {
       } else {
         var N = bodies[isectId].calcNormVec(isect); // surface normal
         var V = Vector.normalize(Vector.subtract(eye,isect.xyz)); // view vector
-        var refIsect = bodies[isectId].refracVec(N, V, isect);
+        var refIsect = bodies[isectId].refVec(N, V, isect);
         var closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, isectId, bodies);
-        if (closest.exists)
+        if (closest.exists) {
           SHADER.rayTracing(refIsect.xyz, closest, closest.id, lights, bodies, c);
-        c = c;
+        }
       } // if not just rendering isect
     },
 
@@ -66,7 +66,7 @@ var SHADER = function() {
           throw "shadeIsect: bad parameter passed";
       else if (bodies[isectId].isLight) {
         bodies[isectId].getColor(c);
-      } else if (!CONST.REFRACTION || bodies[isectId].alpha === 1) {
+      } else if (!CONST.TRANSPARENT || bodies[isectId].alpha === 1) {
         // add light for each source
         var Lloc = new Vector(0,0,0);
         for (var l=0; l<lights.length; l++) {
@@ -86,16 +86,21 @@ var SHADER = function() {
               lights[l].addSpecular(N, L, V, bodies[isectId], c);
             }
           } // end if light not occluded
+
+          if ((isect.id == 15 || isect.id == 16) && c[0] > c[1] && c[0] > c[2]) {
+            c = c;
+          }
         } // end for lights
         c.scale3(1/lights.length);
         // if (isectId > 14) console.log("lid color", c);
       } else {
         var N = bodies[isectId].calcNormVec(isect); // surface normal
         var V = Vector.normalize(Vector.subtract(eye,isect.xyz)); // view vector
-        var refIsect = bodies[isectId].refracVec(N, V, isect);
+        var refIsect = bodies[isectId].refVec(N, V, isect);
         var closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, isectId, bodies);
-        if (closest.exists)
+        if (closest.exists) {
           SHADER.pathTracing(refIsect.xyz, closest, closest.id, lights, bodies, c);
+        }
       }
     },
 
@@ -115,27 +120,50 @@ var SHADER = function() {
       }
       for (var i = 0; i < 3; i++)
         c[i] *= (BRDFDiffuse*body.diffuse[i] + BRDFSpecular*body.specular[i]);
+
+      if (isect.id && (isect.id == 13 || isect.id == 14) && c[0] > c[1] && c[0] > c[2]) {
+        c = c;
+      }
     },
 
+    counter: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     roulette: function(shader) {
       var recur = function(eye, closest, id, lights, bodies, c) {
         if (!closest.exists) return;
+            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
+              c = c;
+            }
 
         var rand = Math.random();
         if (!bodies[id].isLight && rand < CONST.ROULETTE_RATE) { // Stop
           var N = bodies[closest.id].calcNormVec(closest); // surface normal
-          if (CONST.REFRACTION && bodies[id].alpha < 1) {
+          if (CONST.TRANSPARENT && bodies[id].alpha < 1) {
             var V = Vector.normalize(Vector.subtract(eye,closest.xyz)); // view vector
-            var refIsect = bodies[id].refracVec(N, V, closest);
+            var refIsect = bodies[id].refVec(N, V, closest);
             closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, id, bodies);
+            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
+              c = c;
+            }
           }
           if (closest.exists && !bodies[closest.id].isLight) {
             var L = GEO.randomDir(N);
             var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,bodies);
+              if (closest.id == 13 || closest.id == 14) {
+                SHADER.counter[isect.id]++;
+              }
             recur(closest.xyz, isect, isect.id, lights, bodies, c);
             SHADER.BlinnPhong(N, L, eye, closest, bodies[closest.id], c);
+            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
+              c = c;
+            }
           }
+            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
+              c = c;
+            }
         }
+            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
+              c = c;
+            }
 
         if (closest.exists) shader(eye, closest,closest.id,lights,bodies,c);
       };
