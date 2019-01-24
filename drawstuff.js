@@ -329,7 +329,7 @@ var addBRDF = function(context, shader, sample) {
   inter = setInterval(addSample, 100);
 };
 
-var addSample = function(sample) {
+var addSample = function(sample=5) {
   addBRDF(VIEW.context, SHADER.getShader(CONST.PATH_TRACING_SHADER), sample);
 };
 

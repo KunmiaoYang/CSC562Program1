@@ -1,7 +1,6 @@
 var Sphere = function(body) {
   // Default material
   body.alpha = 1; // alpha compositing for transparent
-  body.RI = 1;  // Refractive index
   body.Trans = 1;
 
   // calculate t, given start point, end point and Ellipsoid
@@ -65,7 +64,7 @@ var Sphere = function(body) {
   body.refVec = function(N, V, isect) {
     // Use random number to decide whether a ray would refract or reflect
     // if (Math.random() < 0.7) { // Refraction
-    // if (true) {
+    // if (false) {
     if (Math.random() < body.Trans*Vector.dot(N, V)) { // Refraction
       return body.refracVec(N, V, isect);
     } else { // Reflection

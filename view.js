@@ -136,7 +136,7 @@ var VIEW = function() {
               SHADER.BlinnPhong(N, L, eye, closest, RES.bounceBodies[closest.id], c);
             }
             // Direct ray
-            SHADER.pathTracing(eye,closest,closest.id,RES.inputLights,RES.bounceBodies,c.scale3(8));
+            SHADER.pathTracing(eye,closest,closest.id,RES.inputLights,RES.bounceBodies,c.scale3(4));
           }
         }
         addColor(imagedata,x,y,VIEW.colorMap,c,sample);
