@@ -87,7 +87,7 @@ var SHADER = function() {
             }
           } // end if light not occluded
 
-          if ((isect.id == 15 || isect.id == 16) && c[0] > c[1] && c[0] > c[2]) {
+          if ((isect.id == 13 || isect.id == 14) && c[0] > c[1] && c[0] > c[2]) {
             c = c;
           }
         } // end for lights
@@ -120,19 +120,11 @@ var SHADER = function() {
       }
       for (var i = 0; i < 3; i++)
         c[i] *= (BRDFDiffuse*body.diffuse[i] + BRDFSpecular*body.specular[i]);
-
-      if (isect.id && (isect.id == 13 || isect.id == 14) && c[0] > c[1] && c[0] > c[2]) {
-        c = c;
-      }
     },
 
-    counter: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     roulette: function(shader) {
       var recur = function(eye, closest, id, lights, bodies, c) {
         if (!closest.exists) return;
-            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
-              c = c;
-            }
 
         var rand = Math.random();
         if (!bodies[id].isLight && rand < CONST.ROULETTE_RATE) { // Stop
@@ -141,29 +133,14 @@ var SHADER = function() {
             var V = Vector.normalize(Vector.subtract(eye,closest.xyz)); // view vector
             var refIsect = bodies[id].refVec(N, V, closest);
             closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, id, bodies);
-            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
-              c = c;
-            }
           }
           if (closest.exists && !bodies[closest.id].isLight) {
             var L = GEO.randomDir(N);
             var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,bodies);
-              if (closest.id == 13 || closest.id == 14) {
-                SHADER.counter[isect.id]++;
-              }
             recur(closest.xyz, isect, isect.id, lights, bodies, c);
             SHADER.BlinnPhong(N, L, eye, closest, bodies[closest.id], c);
-            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
-              c = c;
-            }
           }
-            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
-              c = c;
-            }
         }
-            if ((closest.id == 13 || closest.id == 14) && c[0] > c[1] && c[0] > c[2]) {
-              c = c;
-            }
 
         if (closest.exists) shader(eye, closest,closest.id,lights,bodies,c);
       };

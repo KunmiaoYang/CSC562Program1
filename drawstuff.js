@@ -304,6 +304,7 @@ var rayTracing = function() {
     default:
       RES.loadSingleLight();
   }
+  RES.loadBounceBodies();
 
   // Get the canvas and context
   VIEW.canvas = document.getElementById("viewport");
@@ -351,6 +352,7 @@ var pathTracing = function() {
     default:
       RES.loadSingleLight();
   }
+  RES.loadBounceBodies();
 
   // Get the canvas and context
   VIEW.canvas = document.getElementById("viewport");

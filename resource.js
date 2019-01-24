@@ -122,12 +122,11 @@ var RES = function() {
         RES.bodies[0].RI = 1.4;
         RES.bodies[0].Trans = 4*RES.bodies[0].RI/Math.pow(RES.bodies[0].RI + 1, 2);
       }
-
+    },
+    loadBounceBodies: function() {
       for (var i = 0; i < RES.bodies.length; i++)
         RES.bounceBodies.push(RES.bodies[i]);
       parseTriangles(lid, RES.bounceBodies);
-
-      // parseTriangles(lid, bodies);
     },
     loadLights: function(input = pointLights) {
       // RES.inputLights = getJSONFile(CONST.INPUT_LIGHTS_URL,"lights").map(PointLight);
@@ -142,7 +141,6 @@ var RES = function() {
       for (var i = 0, n = lights.length; i < n; i++) {
         RES.inputLights.push(lights[i]);
         RES.bodies.push(lights[i].body);
-        RES.bounceBodies.push(lights[i].body);
       }
     },
   };

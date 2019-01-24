@@ -36,17 +36,10 @@ class Vector {
 
     // static dot method
     static dot(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.dot: non-vector parameter";
-            else
-                return(v1.x*v2.x + v1.y*v2.y + v1.z*v2.z);
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(NaN);
-        }
+      if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
+          throw "Vector.dot: non-vector parameter";
+      else
+          return(v1.x*v2.x + v1.y*v2.y + v1.z*v2.z);
     } // end dot static method
 
     // static cross method
@@ -70,17 +63,10 @@ class Vector {
 
     // static add method
     static add(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.add: non-vector parameter";
-            else
-                return(new Vector(v1.x+v2.x,v1.y+v2.y,v1.z+v2.z));
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
-        }
+      if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
+          throw "Vector.add: non-vector parameter";
+      else
+          return(new Vector(v1.x+v2.x,v1.y+v2.y,v1.z+v2.z));
     } // end add static method
 
     // static subtract method, v1-v2

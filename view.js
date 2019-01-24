@@ -108,19 +108,26 @@ var VIEW = function() {
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
         if (closest.exists) {
-          if (RES.bodies[closest.id].isLight) {
-            RES.bodies[closest.id].getColor(c);
+          while (!RES.bounceBodies[closest.id].isLight && RES.bounceBodies[closest.id].alpha < 1) {
+            var N = RES.bounceBodies[closest.id].calcNormVec(closest); // surface normal
+            var V = Vector.normalize(Vector.scale(-1, Dir));
+            var refIsect = RES.bounceBodies[closest.id].refVec(N, V, closest);
+            closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, closest.id, RES.bounceBodies);
+          }
+
+          if (RES.bounceBodies[closest.id].isLight) {
+            RES.bounceBodies[closest.id].getColor(c);
           } else {
             // Indirect ray
-            var N = RES.bodies[closest.id].calcNormVec(closest); // surface normal
+            var N = RES.bounceBodies[closest.id].calcNormVec(closest); // surface normal
             var L = GEO.randomDir(N);
             var isect = GEO.closestIntersect([closest.xyz, L],0,closest.id,RES.bounceBodies);
             if (isect.exists) {
               shader(closest.xyz,isect,isect.id,RES.inputLights,RES.bounceBodies,c);
-              SHADER.BlinnPhong(N, L, CONST.Eye, closest, RES.bodies[closest.id], c);
+              SHADER.BlinnPhong(N, L, CONST.Eye, closest, RES.bounceBodies[closest.id], c);
             }
             // Direct ray
-            shader(CONST.Eye,closest,closest.id,RES.inputLights,RES.bodies,c.scale3(8));
+            SHADER.pathTracing(CONST.Eye,closest,closest.id,RES.inputLights,RES.bounceBodies,c.scale3(1));
           }
         }
         addColor(imagedata,x,y,VIEW.colorMap,c,sample);
