@@ -87,7 +87,7 @@ var SHADER = function() {
             }
           } // end if light not occluded
 
-          if ((isect.id == 13 || isect.id == 14) && c[0] > c[1] && c[0] > c[2]) {
+          if ((isect.id == 16 || isect.id == 17)) {
             c = c;
           }
         } // end for lights
@@ -129,9 +129,10 @@ var SHADER = function() {
         var rand = Math.random();
         if (!bodies[id].isLight && rand < CONST.ROULETTE_RATE) { // Stop
           var N = bodies[closest.id].calcNormVec(closest); // surface normal
-          if (CONST.TRANSPARENT && bodies[id].alpha < 1) {
+          while (CONST.TRANSPARENT && bodies[closest.id].alpha < 1) {
             var V = Vector.normalize(Vector.subtract(eye,closest.xyz)); // view vector
-            var refIsect = bodies[id].refVec(N, V, closest);
+            var refIsect = bodies[closest.id].refVec(N, V, closest);
+            eye = refIsect.xyz;
             closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, id, bodies);
           }
           if (closest.exists && !bodies[closest.id].isLight) {

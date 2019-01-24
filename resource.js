@@ -1,5 +1,5 @@
 var RES = function() {
-  var a = 0.4, d = 0.4, s = 0.2;
+  var a = 0.6, d = 0.1, s = 0.3;
       // "material": {"ambient": [a,a,a], "diffuse": [d,d,d], "specular": [s,s,s], "n":17},
       // "material": {"ambient": [a,0,0], "diffuse": [d,0,0], "specular": [s,0,0], "n":17},
       // "material": {"ambient": [0,0,a], "diffuse": [0,0,d], "specular": [0,0,s], "n":17},
@@ -39,7 +39,7 @@ var RES = function() {
 
   var marble = {
     "ambient": [0.1,0.0,0.0], "diffuse": [0.6,0.0,0.0], "specular": [0.3,0.3,0.3], "n": 3,
-    "x": 0.4, "y": 0.2, "z": 0.3, "r":0.2, "alpha": 0,
+    "x": 0.2, "y": 0.2, "z": 0.3, "r":0.2, "alpha": 0,
   };
 
   var pointLights = [
