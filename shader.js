@@ -53,6 +53,7 @@ var SHADER = function() {
         var N = bodies[isectId].calcNormVec(isect); // surface normal
         var V = Vector.normalize(Vector.subtract(eye,isect.xyz)); // view vector
         var refIsect = bodies[isectId].refVec(N, V, isect);
+        if (!refIsect.exists) return;
         var closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, isectId, bodies);
         if (closest.exists) {
           SHADER.rayTracing(refIsect.xyz, closest, closest.id, lights, bodies, c);
@@ -97,6 +98,7 @@ var SHADER = function() {
         var N = bodies[isectId].calcNormVec(isect); // surface normal
         var V = Vector.normalize(Vector.subtract(eye,isect.xyz)); // view vector
         var refIsect = bodies[isectId].refVec(N, V, isect);
+        if (!refIsect.exists) return;
         var closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, isectId, bodies);
         if (closest.exists) {
           SHADER.pathTracing(refIsect.xyz, closest, closest.id, lights, bodies, c);
@@ -132,6 +134,7 @@ var SHADER = function() {
           while (CONST.TRANSPARENT && bodies[closest.id].alpha < 1) {
             var V = Vector.normalize(Vector.subtract(eye,closest.xyz)); // view vector
             var refIsect = bodies[closest.id].refVec(N, V, closest);
+            if (!refIsect.exists) return;
             eye = refIsect.xyz;
             closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, id, bodies);
           }

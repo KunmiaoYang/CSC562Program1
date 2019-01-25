@@ -113,6 +113,7 @@ var VIEW = function() {
             var N = RES.bounceBodies[closest.id].calcNormVec(closest); // surface normal
             var V = Vector.normalize(Vector.scale(-1, Dir));
             var refIsect = RES.bounceBodies[closest.id].refVec(N, V, closest);
+            if (!refIsect.exists) return;
             eye = refIsect.xyz;
             closest = GEO.closestIntersect([refIsect.xyz, refIsect.L], 0, closest.id, RES.bounceBodies);
 

@@ -316,18 +316,24 @@ var rayTracing = function() {
   VIEW.context.putImageData(VIEW.imagedata, 0, 0);
 };
 
+var inter;
 var addBRDF = function(context, shader, sample) {
   var i = 1, total = sample + VIEW.sample;
-  var inter;
   var addSample = function() {
     VIEW.eachPixel(VIEW.imagedata, RES.bodies,
                    VIEW.pathTracing(new Color(0,0,0,0), shader, ++VIEW.sample));
     VIEW.context.putImageData(VIEW.imagedata, 0, 0);
     console.log("Sample: ", VIEW.sample, "/", total);
-    if (++i > sample) clearInterval(inter);
+    if (++i > sample) {
+      clearInterval(inter);
+      alert("Sampling complete!")
+    }
   };
   inter = setInterval(addSample, 100);
 };
+var stop = function() {
+  inter = clearInterval(inter);
+}
 
 var addSample = function(sample=5) {
   addBRDF(VIEW.context, SHADER.getShader(CONST.PATH_TRACING_SHADER), sample);

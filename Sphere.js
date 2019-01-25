@@ -65,9 +65,13 @@ var Sphere = function(body) {
     // Use random number to decide whether a ray would refract or reflect
     // if (Math.random() < 0.7) { // Refraction
     // if (false) {
-    if (Math.random() < body.Trans*Vector.dot(N, V)) { // Refraction
+    // if (Math.random() < body.Trans*Vector.dot(N, V)) { // Refraction
+    if (Math.random() < 1.2*Vector.dot(N, V)) { // Refraction
+      // isect.exists = false;
+      // return isect;
       return body.refracVec(N, V, isect);
     } else { // Reflection
+      // isect.exists = false;
       isect.L = GEO.reflecVec(N, V);
       return isect;
     }
