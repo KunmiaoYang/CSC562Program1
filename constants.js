@@ -44,5 +44,6 @@ var CONST = function() {
     SAMPLE_COUNT: 5,
     ROULETTE_RATE: 0.5,
     TRANSPARENT: true,
+    task: 0,
   };
 }();

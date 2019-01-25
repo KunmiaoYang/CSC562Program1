@@ -1,8 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Pixel Drawing</title>
+  <meta charset="UTF-8">
+  <title>Path tracing</title>
+  <link type="text/css" rel="stylesheet" href="style.css">
+</head>
+<body onload="main();">
+<canvas id="viewport" width="512" height="512"></canvas><br>
+<table class='config'>
+  <tr>
+    <td colspan="2" id='curSample'>
+      Sample:
+    </td>
+    <td colspan="2">
+      New sample:
+      <input type="number" id='sample' class='numInput' min='1' value="5">
+      <button type="button" id="addSample" onclick="UI.handleAddSample()">Add sample</button>
+    </td>
+  </tr>
+  <tr>
+    <td class='col'>
+      <button type="button" id="rayTracing" onclick="UI.handleRayTracing()">Ray tracing</button>
+    </td>
+    <td class='col'>
+      <button type="button" id="pathTracing" onclick="UI.handlePathTracing()">Path tracing</button>
+    </td>
+    <td class='col'>
+      <button type="button" id="stop" onclick="stop()">Stop</button>
+    </td>
+  </tr>
+  <tr>
+    <td class='col'><b>Lights models:</b></td>
+  </tr>
+  <tr>
+    <td class='col'>
+      <input id='lightsModel1' class='lights'
+      type="radio" name="light" value="1">Single light
+    </td>
+    <td class='col'>
+      <input id='lightsModel2' class='lights'
+      type="radio" name="light" value="2">Double lights
+    </td>
+    <td class='col'>
+      <input id='lightsModel3' class='lights'
+      type="radio" name="light" value="3">Area light
+    </td>
+  </tr>
+  <tr>
+    <td class='col'>
+      <input id='lightsModel0' class='lights'
+      type="radio" name="light" value="0">
+      From URL:
+    </td>
+    <td colspan="3">
+      <input type="text" id='lightUrl' class='urlInput'>
+    </td>
+  </tr>
+  <tr>
+    <td class='col'><b>Spheres models:</b></td>
+  </tr>
+  <tr>
+    <td class='col'>
+      From URL:
+    </td>
+    <td colspan="3">
+      <input type="text" id='sphereUrl' class='urlInput'>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      Tranparent sphere:
+      <input type="checkbox" class='transparent' id="transparent" value=true>
+    </td>
+  </tr>
+</table>
+<!--load scripts-->
+<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="Vector.js"></script>
 <script type="text/javascript" src="Color.js"></script>
 <script type="text/javascript" src="Triangle.js"></script>
@@ -13,12 +86,10 @@
 <script type="text/javascript" src="CeilingSquareLight.js"></script>
 <script type="text/javascript" src="constants.js"></script>
 <script type="text/javascript" src="resource.js"></script>
+<script type="text/javascript" src="ui.js"></script>
 <script type="text/javascript" src="geometry.js"></script>
 <script type="text/javascript" src="view.js"></script>
 <script type="text/javascript" src="shader.js"></script>
 <script type="text/javascript" src="drawstuff.js"></script>
-</head>
-<body onload="main();">
-<canvas id="viewport" width="512" height="512"></canvas>
 </body>
 </html>

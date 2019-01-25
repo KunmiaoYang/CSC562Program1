@@ -289,6 +289,8 @@ function framelessRayCastSpheres(context) {
 } // end frameless ray cast spheres
 
 var rayTracing = function() {
+  CONST.task = 0;
+  UI.disableButton();
   // Load resource
   RES.loadBodies();
   switch (CONST.LIGHTS) {
@@ -314,25 +316,31 @@ var rayTracing = function() {
   VIEW.eachPixel(VIEW.imagedata, RES.bodies,
     VIEW.rayTracing(new Color(0,0,0,0), SHADER.rayTracing));
   VIEW.context.putImageData(VIEW.imagedata, 0, 0);
+  UI.enableButton();
 };
 
 var inter;
 var addBRDF = function(context, shader, sample) {
+  CONST.task = 1;
+  UI.disableButton();
   var i = 1, total = sample + VIEW.sample;
-  var addSample = function() {
+  var newSample = function() {
     VIEW.eachPixel(VIEW.imagedata, RES.bodies,
                    VIEW.pathTracing(new Color(0,0,0,0), shader, ++VIEW.sample));
     VIEW.context.putImageData(VIEW.imagedata, 0, 0);
     console.log("Sample: ", VIEW.sample, "/", total);
+    UI.updateSample(VIEW.sample, total);
     if (++i > sample) {
       clearInterval(inter);
+      UI.enableButton();
       alert("Sampling complete!")
     }
   };
-  inter = setInterval(addSample, 100);
+  inter = setInterval(newSample, 100);
 };
 var stop = function() {
   inter = clearInterval(inter);
+  UI.enableButton();
 }
 
 var addSample = function(sample=5) {
@@ -372,5 +380,6 @@ var pathTracing = function() {
 
 /* main -- here is where execution begins after window load */
 function main() {
+  UI.init();
   rayTracing();
 }
