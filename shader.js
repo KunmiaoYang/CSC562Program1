@@ -42,8 +42,10 @@ var SHADER = function() {
                   lights[l].addDiffuse(N, L, body, c);
 
                   // add in the specular light
+                if (CONST.BRDFType & CONST.BRDF_TYPES.SPECULAR) {
                   var V = Vector.normalize(Vector.subtract(eye,isect.xyz)); // view vector
                   lights[l].addSpecular(N, L, V, body, c);
+                }
               } // end if light not occluded
           } // end for lights
           c.scale3(1/lights.length);
@@ -88,9 +90,6 @@ var SHADER = function() {
             }
           } // end if light not occluded
 
-          if ((isect.id == 16 || isect.id == 17)) {
-            c = c;
-          }
         } // end for lights
         c.scale3(1/lights.length);
         // if (isectId > 14) console.log("lid color", c);

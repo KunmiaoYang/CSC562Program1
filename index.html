@@ -32,6 +32,18 @@
     </td>
   </tr>
   <tr>
+    <td class='col'><b>Shader:</b></td>
+    <td colspan="3">
+      <input id='shader1' class='shader'
+      type="radio" name="shader" value="1">One bounce
+      <input id='shader2' class='shader'
+      type="radio" name="shader" value="2">Russia Roulette
+    </td>
+    <td class="col">
+      <input type="checkbox" class='specular' id="specular" value=true>Specular
+    </td>
+  </tr>
+  <tr>
     <td class='col'><b>Lights models:</b></td>
   </tr>
   <tr>
@@ -54,7 +66,7 @@
       type="radio" name="light" value="0">
       From URL:
     </td>
-    <td colspan="3">
+    <td colspan="4">
       <input type="text" id='lightUrl' class='urlInput'>
     </td>
   </tr>
@@ -65,7 +77,7 @@
     <td class='col'>
       From URL:
     </td>
-    <td colspan="3">
+    <td colspan="4">
       <input type="text" id='sphereUrl' class='urlInput'>
     </td>
   </tr>

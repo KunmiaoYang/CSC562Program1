@@ -9,6 +9,13 @@ var UI = function() {
     RES.transparentSphere.y = parseFloat($('#y').prop('value'));
     RES.transparentSphere.z = parseFloat($('#z').prop('value'));
     RES.transparentSphere.r = parseFloat($('#r').prop('value'));
+
+    CONST.PATH_TRACING_SHADER = parseInt($('input.shader:checked').prop('value'));
+    if ($('input.specular:checked').length > 0) {
+      CONST.BRDFType |= CONST.BRDF_TYPES.SPECULAR;
+    } else if (CONST.BRDFType & CONST.BRDF_TYPES.SPECULAR) {
+      CONST.BRDFType ^= CONST.BRDF_TYPES.SPECULAR;
+    }
   };
   return {
     init: function() {
@@ -24,6 +31,10 @@ var UI = function() {
         $('.transSphParam').show();
       } else {
         $('.transSphParam').hide();
+      }
+      $('#shader' + CONST.PATH_TRACING_SHADER).prop('checked', 'true');
+      if (CONST.BRDFType & CONST.BRDF_TYPES.SPECULAR) {
+        $('#specular').prop('checked', 'true');
       }
     },
     updateParameter: updateParameter,
