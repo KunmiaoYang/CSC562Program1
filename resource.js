@@ -39,7 +39,7 @@ var RES = function() {
 
   var marble = {
     "ambient": [0.1,0.0,0.0], "diffuse": [0.6,0.0,0.0], "specular": [0.3,0.3,0.3], "n": 3,
-    "x": 0.25, "y": 0.1, "z": 0.3, "r":0.1, "alpha": 0, "RI": 2,
+    "x": 0.25, "y": 0.2, "z": 0.2, "r":0.2, "alpha": 0, "RI": 2,
   };
 
   var pointLights = [
@@ -106,6 +106,7 @@ var RES = function() {
     bodies: [],
     bounceBodies: [],
     inputLights: [],
+    transparentSphere: marble,
     getJSONFile: getJSONFile,
     loadBodies: function() {
       RES.bodies = [];

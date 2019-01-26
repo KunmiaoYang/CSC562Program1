@@ -12,10 +12,12 @@
     <td colspan="2" id='curSample'>
       Sample:
     </td>
-    <td colspan="2">
+    <td colspan="3">
       New sample:
       <input type="number" id='sample' class='numInput' min='1' value="5">
       <button type="button" id="addSample" onclick="UI.handleAddSample()">Add sample</button>
+    </td>
+    <td class='col'>
     </td>
   </tr>
   <tr>
@@ -69,8 +71,15 @@
   </tr>
   <tr>
     <td colspan="2">
+      <input type="checkbox" class='transparent' id="transparent" value=true
+      onchange="$('.transSphParam').toggle()">
       Tranparent sphere:
-      <input type="checkbox" class='transparent' id="transparent" value=true>
+    </td>
+    <td colspan="4" class='transSphParam'>
+      x: <input type="number" id='x' class='numInput' min='0.0' max='1.0' step='0.05'>
+      y: <input type="number" id='y' class='numInput' min='0.0' max='1.0' step='0.05'>
+      z: <input type="number" id='z' class='numInput' min='0.0' max='1.0' step='0.05'>
+      r: <input type="number" id='r' class='numInput' min='0.0' max='1.0' step='0.05'>
     </td>
   </tr>
 </table>
