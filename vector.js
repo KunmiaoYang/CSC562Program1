@@ -71,19 +71,12 @@ class Vector {
 
     // static subtract method, v1-v2
     static subtract(v1,v2) {
-        try {
-            if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
-                throw "Vector.subtract: non-vector parameter";
-            else {
-                var v = new Vector(v1.x-v2.x,v1.y-v2.y,v1.z-v2.z);
-                //v.toConsole("Vector.subtract: ");
-                return(v);
-            }
-        } // end try
-
-        catch(e) {
-            console.log(e);
-            return(new Vector(NaN,NaN,NaN));
+        if (!(v1 instanceof Vector) || !(v2 instanceof Vector))
+            throw "Vector.subtract: non-vector parameter";
+        else {
+            var v = new Vector(v1.x-v2.x,v1.y-v2.y,v1.z-v2.z);
+            //v.toConsole("Vector.subtract: ");
+            return(v);
         }
     } // end subtract static method
 

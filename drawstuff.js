@@ -380,6 +380,7 @@ var pathTracing = function() {
 
 /* main -- here is where execution begins after window load */
 function main() {
+  CONST.initObject();
   UI.init();
   rayTracing();
 }

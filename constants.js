@@ -34,7 +34,7 @@ var CONST = function() {
         //"https://pages.github.ncsu.edu/bwatson/introcg-prog1-2017/lights.json",
     renderTypes: renderTypes,
     RENDER_METHOD: renderTypes.LIT_SHADOWS, // show intersections unlit in white
-    Eye: new Vector(0.5,0.5,-0.5), // set the eye position
+    Eye: {}, // set the eye position
     BRDF_TYPES: BRDF_TYPES,
     BRDFType: BRDF_TYPES.DIFFUSE | BRDF_TYPES.SPECULAR,
     SHADER_TYPES: SHADER_TYPES,
@@ -45,5 +45,8 @@ var CONST = function() {
     ROULETTE_RATE: 0.5,
     TRANSPARENT: false,
     task: 0,
+    initObject: function() {
+      CONST.Eye = new Vector(0.5, 0.5, -0.5);
+    },
   };
 }();
