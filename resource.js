@@ -107,7 +107,7 @@ var RES = function() {
     bounceBodies: [],
     inputLights: [],
     transparentSphere: marble,
-    getJSONFile: getJSONFile,
+    // getJSONFile: getJSONFile,
     loadBodies: function() {
       RES.bodies = [];
       RES.bounceBodies = [];

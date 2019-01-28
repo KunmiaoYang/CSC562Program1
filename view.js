@@ -86,13 +86,13 @@ var VIEW = function() {
         for (var y=0, x; y<h; y++, wy += wyd) {
             wx = CONST.WIN_LEFT; // init w
             for (x=0; x<h; x++, wx += wxd) {
-              callback(imagedata,x,y,wx,wy);
+              callback(imagedata,x,y,wx,wy,wxd,wyd);
             } // end for x
         } // end for y
       }
     },
     rayTracing: function(c, shader) {
-      return function(imagedata,x,y,wx,wy) {
+      return function(imagedata,x,y,wx,wy,wxd,wyd) {
         c.change(0,0,0,255); // set pixel to background color
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
@@ -103,8 +103,11 @@ var VIEW = function() {
       };
     },
     pathTracing: function(c, shader, sample) {
-      return function(imagedata,x,y,wx,wy) {
+      return function(imagedata,x,y,wx,wy,wxd,wyd) {
         c.change(0,0,0,255); // set pixel to background color
+        wx += wxd*Math.random();
+        wy += wyd*Math.random();
+
         var Dir = Vector.subtract(new Vector(wx,wy,CONST.WIN_Z),CONST.Eye); // set ray direction
         var closest = GEO.closestIntersect([CONST.Eye,Dir],1,-1,RES.bodies);
         if (closest.exists) {
@@ -143,7 +146,7 @@ var VIEW = function() {
         addColor(imagedata,x,y,VIEW.colorMap,c,sample);
       };
     },
-    initColorMap: function(imagedata,x,y,wx,wy) {
+    initColorMap: function(imagedata,x,y,wx,wy,wxd,wyd) {
       if (!VIEW.colorMap[x]) VIEW.colorMap[x] = [];
       VIEW.colorMap[x][y] = new Color(0, 0, 0, 255);
       drawPixel(imagedata,x,y,VIEW.colorMap[x][y]);
