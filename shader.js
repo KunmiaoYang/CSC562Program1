@@ -108,11 +108,13 @@ var SHADER = function() {
     // N and L should be normalized
     BlinnPhong: function(N, L, eye, isect, body, c) {
       var BRDFDiffuse = 0, BRDFSpecular = 0;
+      var dist = Vector.subtract(eye,isect.xyz);
+      var len = dist.length();
       if (CONST.BRDFType & CONST.BRDF_TYPES.DIFFUSE) {
         BRDFDiffuse = Math.max(0, Vector.dot(L, N));
       }
       if (CONST.BRDFType & CONST.BRDF_TYPES.SPECULAR) {
-        var V = Vector.normalize(Vector.subtract(eye,isect.xyz)); // view vector
+        var V = Vector.normalize(dist); // view vector
         var H = Vector.normalize(Vector.add(L,V)); // half vector
         BRDFSpecular = Math.pow(Math.max(0,Vector.dot(N,H)), body.n);
       }
@@ -120,7 +122,7 @@ var SHADER = function() {
         console.log("NaN:", isect);
       }
       for (var i = 0; i < 3; i++)
-        c[i] *= (BRDFDiffuse*body.diffuse[i] + BRDFSpecular*body.specular[i]);
+        c[i] *= (BRDFDiffuse*body.diffuse[i] + BRDFSpecular*body.specular[i])/(1 + len*len);
     },
 
     roulette: function(shader) {

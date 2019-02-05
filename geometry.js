@@ -86,7 +86,7 @@ var GEO = function() {
     // N and V should be normalized first, check it before function call
     refracVec: function(N, V, refracIndex) {
       var cos1 = Vector.dot(N, V);
-      if (1 === refracIndex || 1 === cos1 || 0 === cos1) return Vector.scale(-1, V);
+      if (1 === refracIndex || 1 === cos1) return Vector.scale(-1, V);
 
       var sin2 = Math.sqrt(1 - Math.pow(cos1,2))/refracIndex;
       var cos2 = Math.sqrt(1 - Math.pow(sin2,2));
